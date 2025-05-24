@@ -1,0 +1,32 @@
+
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "80:80" 
+    volumes:
+      - ./web:/app      
+      - /app/node_modules
+    depends_on:
+      - db
+    environment:
+      DB_HOST: localhost 
+      DB_USER: root
+      DB_PASSWORD: 1234
+      DB_NAME: database
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: mi_base
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+volumes:
+  db_data:
