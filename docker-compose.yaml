@@ -5,28 +5,32 @@ services:
   web:
     build: .
     ports:
-      - "80:80" 
+      - "8080:80"               
     volumes:
-      - ./web:/app      
-      - /app/node_modules
+      - ./web:/app             
+      - node_modules:/app/node_modules
     depends_on:
       - db
     environment:
-      DB_HOST: localhost 
+      DB_HOST: db            
       DB_USER: root
       DB_PASSWORD: 1234
-      DB_NAME: database
+      DB_NAME: TEST            
 
   db:
     image: mysql:8.0
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: mi_base
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: TEST
     volumes:
       - db_data:/var/lib/mysql
+      - ./db/01-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./db/02-seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
     ports:
       - "3306:3306"
 
 volumes:
   db_data:
+  node_modules:
+
