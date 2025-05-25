@@ -36,7 +36,7 @@ AdsProject/
 1. Clona el repositorio:
 
    ```bash
-   git clone https://github.com/tu-org/AdsProject.git
+   git clone https://github.com/juancitucs/AdsProyect.git
    cd AdsProject
    ```
 
