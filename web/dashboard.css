@@ -1,0 +1,314 @@
+/* === Tipografía y variables === */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+:root {
+  --font-base:   'Montserrat', sans-serif;
+  --bg:          #f6f7f8;
+  --card-bg:     #ffffff;
+  --border:      #e1e4e8;
+  --text:        #1a1a1b;
+  --secondary:   #26a65b;
+  --radius:      8px;
+  --gap:         1rem;
+  --sidebar-w:   250px;
+  --rightbar-w:  250px;
+  --header-h:    70px;
+  --logo-size:   40px;   /* Tamaño uniforme de logo y avatar */
+}
+
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: var(--font-base);
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Grid en .container */
+.container {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: var(--sidebar-w) 1fr var(--rightbar-w);
+  grid-template-rows: var(--header-h) 1fr;
+  grid-template-areas:
+    "header  header  header"
+    "sidebar feed    right";
+}
+
+/* Oculta rightbar <1100px, muestra FAB */
+@media (max-width: 1100px) {
+  .container {
+    grid-template-columns: 1fr;
+    grid-template-rows: var(--header-h) 1fr;
+    grid-template-areas:
+      "header"
+      "feed";
+  }
+  .rightbar { display: none; }
+  .fab      { display: flex; }
+}
+
+/* ---------- Header ---------- */
+.header {
+  grid-area: header;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--gap);
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Logo izquierdo redondeado */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.logo {
+  width: var(--logo-size);
+  height: var(--logo-size);
+  border-radius: 50%;
+  object-fit: cover;
+}
+.brand {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--secondary);
+}
+
+/* Buscador centrado y con ancho máximo */
+.header-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 0 var(--gap);
+}
+.header-center input {
+  width: 100%;
+  max-width: 500px;         /* controla lo “achicado” de los costados */
+  height: calc(var(--header-h) * 0.5);
+  padding: 0 var(--gap);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+/* Avatar derecho redondeado */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.btn-create {
+  background: var(--secondary);
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.avatar {
+  width: var(--logo-size);
+  height: var(--logo-size);
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+  grid-area: sidebar;
+  background: var(--card-bg);
+  border-right: 1px solid var(--border);
+  padding: var(--gap);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.nav-static,
+.nav-dynamic {
+  list-style: none;
+  width: 100%;
+}
+.nav-item {
+  padding: 0.6rem;
+  margin: 0.25rem 0;
+  text-align: center;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.nav-item:hover,
+.nav-item.active {
+  background: var(--secondary);
+  color: #fff;
+}
+.nav-title {
+  margin: 1rem 0 0.5rem;
+  font-weight: 600;
+  color: #555;
+}
+
+/* ---------- Feed ---------- */
+.feed {
+  grid-area: feed;
+  overflow-y: auto;
+  padding: var(--gap);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+.post {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--gap);
+  display: flex;
+  gap: var(--gap);
+}
+.vote {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.1rem;
+  gap: 0.25rem;
+}
+.vote button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #888;
+}
+.vote .score {
+  font-weight: 600;
+}
+.post-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.post-body h4 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+.post-body p {
+  flex: 1;
+  font-size: 0.9rem;
+  color: #555;
+}
+.post-body img {
+  width: 100%;
+  border-radius: var(--radius);
+  object-fit: cover;
+  aspect-ratio: 16/9;
+}
+.post-body small {
+  font-size: 0.75rem;
+  color: #777;
+}
+
+/* ---------- Rightbar ---------- */
+.rightbar {
+  grid-area: right;
+  background: var(--card-bg);
+  border-left: 1px solid var(--border);
+  padding: var(--gap);
+  overflow-y: auto;
+}
+.rightbar h4 {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+.recent-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.recent-list li {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+/* ---------- FAB y Modal ---------- */
+.fab {
+  position: fixed;
+  bottom: 20px; right: 20px;
+  width: 48px; height: 48px;
+  background: var(--secondary);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.modal {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gap);
+}
+.modal.show {
+  display: flex;
+}
+.modal-box {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: var(--gap);
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+}
+.modal-close {
+  position: absolute; top: 8px; right: 8px;
+  border: none; background: none;
+  font-size: 1.2rem; cursor: pointer;
+}
+.modal-box h3 {
+  margin-bottom: var(--gap);
+  font-weight: 600;
+}
+.modal-box form {
+  display: flex; flex-direction: column; gap: 0.75rem;
+}
+.modal-box label {
+  display: flex; flex-direction: column; font-size: 0.9rem;
+}
+.modal-box input,
+.modal-box textarea,
+.modal-box select {
+  margin-top: 0.3rem;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.btn-publish {
+  align-self: flex-end;
+  background: var(--secondary);
+  color: #fff;
+  border: none;
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+
+
+
+
+

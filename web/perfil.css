@@ -1,0 +1,200 @@
+/* === Tipografía y variables === */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+:root {
+  --font-base:   'Montserrat', sans-serif;
+  --bg:          #f6f7f8;
+  --card-bg:     #ffffff;
+  --border:      #e1e4e8;
+  --text:        #1a1a1b;
+  --accent:      #26a65b;
+  --radius:      8px;
+  --gap:         1rem;
+}
+
+/* Reset */
+* {
+  margin: 0; padding: 0; box-sizing: border-box;
+}
+body {
+  font-family: var(--font-base);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: var(--gap);
+}
+
+/* Layout principal */
+.profile-page {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--gap);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+@media (max-width: 900px) {
+  .profile-page {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Header */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+  margin-bottom: var(--gap);
+}
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+.profile-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+/* Tabs */
+.profile-tabs {
+  display: flex;
+  gap: var(--gap);
+  margin-bottom: var(--gap);
+}
+.tab-btn {
+  padding: 0.5rem 1rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s, border-color 0.2s;
+}
+.tab-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* Contenidos */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Form Edit Profile */
+.profile-form {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--gap);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap);
+}
+.avatar-preview {
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--accent);
+}
+.avatar-upload-btn {
+  background: var(--accent);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.fields label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  gap: 0.25rem;
+}
+.fields input,
+.fields textarea {
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 1rem;
+}
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+.btn-save {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.btn-save:hover {
+  background: #1f8e4b;
+}
+
+/* Listas de Posts y Comentarios */
+.item-list {
+  list-style: none;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.item-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--gap);
+  border-bottom: 1px solid var(--border);
+}
+.item-list li:last-child {
+  border-bottom: none;
+}
+.delete-btn {
+  background: none;
+  border: none;
+  color: #e00;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0 0.25rem;
+}
+.delete-btn:hover {
+  color: #c00;
+}
+
+/* Achievements sidebar */
+.profile-aside {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--gap);
+  height: fit-content;
+}
+.profile-aside h2 {
+  margin-bottom: var(--gap);
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+.achievements-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+

@@ -1,0 +1,205 @@
+/* styles2.css */
+
+/* 1) Importar tipografía */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+/* 2) Variables de tema */
+:root {
+  --font-heading: 'Montserrat', sans-serif;
+  --font-body:    'Montserrat', sans-serif;
+  --color-primary:   #26A65B;   /* Verde principal */
+  --color-secondary: #F57C00;   /* Naranja secundario */
+  --color-neutral:   #333333;   /* Gris oscuro */
+  --color-gray:      #BBBBBB;   /* Gris claro para bordes */
+  --color-bg:        #ffffff;   /* Fondo de página */
+  --color-card-bg:   #FFFFFF;   /* Fondo de tarjetas/form */
+  --radius:          8px;
+  --spacing:         1rem;
+}
+
+/* 3) Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-neutral);
+  line-height: 1.5;
+}
+
+/* 4) Layout principal: columnas juntas y sin separación */
+.hero {
+  width: 90%;
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  /* Hacemos la imagen más amplia y el gap en cero */
+  grid-template-columns: 1.5fr 1fr;
+  gap: 1;
+  min-height: 100vh;
+  align-items: center;
+}
+@media (max-width: 768px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 5) Ilustración lateral: sin padding extra y llena su columna */
+.hero-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.hero-image img {
+  width: 100%;
+  /* Quitamos el max-width para que escale al 100% de su columna */
+  max-width: none;
+  height: auto;
+  /* Opcionalmente quitamos border-radius para un look más limpio */
+  border-radius: 0;
+}
+
+/* 6) Contenido y formulario */
+.hero-content {
+  background: var(--color-card-bg);
+  border-radius: var(--radius) 0 0 var(--radius); /* suavizamos solo el lado izquierdo */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: calc(var(--spacing) * 2);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 1.5);
+  max-width: 400px;
+  margin-left: -2px; /* para remitir esa línea divisoria muy fina */
+}
+@media (max-width: 768px) {
+  .hero-content {
+    border-radius: var(--radius);
+    margin-left: 0;
+  }
+}
+
+/* 7) Logo y títulos */
+.brand-logo {
+  width: 140px;
+  margin-bottom: var(--spacing);
+}
+.hero-content h1 {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  color: var(--color-primary);
+}
+.hero-content p {
+  font-size: 1rem;
+  color: var(--color-neutral);
+  margin-bottom: var(--spacing);
+}
+
+/* 8) Tabs de formulario */
+.form-toggle {
+  display: flex;
+  border: 1px solid var(--color-gray);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: var(--spacing);
+}
+.form-toggle button {
+  flex: 1;
+  padding: 0.75rem;
+  background: var(--color-card-bg);
+  border: none;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  color: var(--color-neutral);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.form-toggle button.active {
+  background: var(--color-primary);
+  color: #fff;
+}
+.form-toggle button:not(.active):hover {
+  background: #f0f0f0;
+}
+
+/* 9) Formularios */
+.form {
+  display: none;
+  flex-direction: column;
+  gap: 1rem;
+}
+.form.active {
+  display: flex;
+}
+
+/* 10) Campos de entrada */
+.input-group input {
+  width: 100%;
+  padding: 0.75rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  border: 1px solid var(--color-gray);
+  border-radius: var(--radius);
+  transition: border-color 0.2s;
+}
+.input-group input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+/* 11) Botones principales */
+.btn-primary {
+  padding: 0.75rem;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.btn-primary:hover {
+  background: var(--color-secondary);
+  transform: translateY(-2px);
+}
+/* 12) Nuevo bloque hero-header */
+.hero-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;             /* espacio pequeño entre icono y texto */
+  margin-bottom: 0.75rem;  /* acerca el bloque al párrafo siguiente */
+}
+
+/* 13) Ajustes al logo */
+.brand-logo {
+  width: 100px;     /* un poco más pequeño para que no flote */
+  height: 100px;
+}
+
+/* 14) Ajustes al título dentro del header */
+.hero-header h1 {
+  font-size: 1.75rem;     /* un pelín más pequeño y compacto */
+  line-height: 1.2;
+  position: relative;
+  margin: 0;
+  padding-bottom: 0.25rem;
+  font-family: var(--font-heading);
+  color: var(--color-primary);
+}
+
+/* 15) Línea de acento bajo el título */
+.hero-header h1::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 40px;               /* largo de la línea */
+  height: 3px;
+  background: var(--color-primary);
+  border-radius: 2px;
+}
+

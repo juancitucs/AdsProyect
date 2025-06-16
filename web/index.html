@@ -1,12 +1,59 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title></title>
-    <link href="css/style.css" rel="stylesheet" />
-  </head>
-  <body>
-    <h1>YESS</h1>
-  </body>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WorkCodile | Bienvenido</title>
+  <link rel="stylesheet" href="styles2.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main class="hero">
+    <!-- Ilustración lateral -->
+    <div class="hero-image">
+      <img src="imagenes/comunidad-workcodile.png" alt="Ilustración de comunidad">
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="hero-content">
+      <!-- Logo -->
+      <div class="hero-header">
+        <img src="imagenes/logo-workcodile.png" alt="WorkCodile Logo" class="brand-logo"/>
+        <h1>Bienvenido a Work Codile</h1>
+      </div>
+      <p>La plataforma de intercambio de trabajos y proyectos para la comunidad UNAM.</p>
+
+      <!-- Tabs -->
+      <div class="form-toggle">
+        <button id="tab-register" class="active">Registrarse</button>
+        <button id="tab-login">Iniciar Sesión</button>
+      </div>
+
+      <!-- Formulario de Registro -->
+      <form id="register-form" class="form active">
+        <div class="input-group">
+          <input type="text" name="studentCode" placeholder="Código de estudiante" required />
+        </div>
+        <div class="input-group">
+          <input type="email" name="email" placeholder="Correo electrónico" required />
+        </div>
+        <div class="input-group">
+          <input type="password" name="password" placeholder="Contraseña" required minlength="6" />
+        </div>
+        <button type="submit" class="btn-primary">Crear cuenta</button>
+      </form>
+
+      <!-- Formulario de Login -->
+      <form id="login-form" class="form">
+        <div class="input-group">
+          <input type="text" name="studentCode" placeholder="Código de estudiante" required />
+        </div>
+        <div class="input-group">
+          <input type="password" name="password" placeholder="Contraseña" required />
+        </div>
+        <button type="submit" class="btn-primary">Iniciar sesión</button>
+      </form>
+    </div>
+  </main>
+</body>
 </html>
