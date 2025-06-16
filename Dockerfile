@@ -1,16 +1,19 @@
 
+# Usa Node.js oficial
 FROM node:18-alpine
 
 WORKDIR /app
-COPY web/package.json web/package-lock.json ./
 
+# 1) Copia los manifiestos y haz npm install solo de prod
+COPY web/package.json web/package-lock.json ./
 RUN npm install --production
 
+# 2) Copia el resto del código
 COPY web/ ./
 
-RUN npm init -y && \
-    npm install express
-
+# 3) Exponemos el puerto 80
 EXPOSE 80
 
+# 4) Arrancamos la app
 CMD ["node", "server.js"]
+
