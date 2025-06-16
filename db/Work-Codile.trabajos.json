@@ -1,0 +1,85 @@
+[{
+  "_id": {
+    "$oid": "684dbf8782c73fdf7136d95a"
+  },
+  "titulo": "Trabajo sobre algoritmos",
+  "contenido": "Análisis sobre algoritmos de búsqueda.",
+  "fechaPublicacion": {
+    "$date": "2025-06-14T00:00:00.000Z"
+  },
+  "autorId": {
+    "$oid": "684db81a82c73fdf7136d92e"
+  },
+  "etiquetas": [
+    "Algoritmos",
+    "Estructuras"
+  ],
+  "archivos": [
+    {
+      "nombre": "algoritmos.pdf",
+      "ruta": "archivos/algoritmos.pdf",
+      "fechaSubida": "2025-06-14T00:00:00Z"
+    }
+  ],
+  "calificaciones": [],
+  "comentarios": [],
+  "cursoId": {
+    "$oid": "684dbc9182c73fdf7136d93b"
+  }
+},
+{
+  "_id": {
+    "$oid": "684dbf8782c73fdf7136d95b"
+  },
+  "titulo": "Diseño de Bases de Datos",
+  "contenido": "Trabajo final de modelado relacional.",
+  "fechaPublicacion": {
+    "$date": "2025-06-14T00:00:00.000Z"
+  },
+  "autorId": {
+    "$oid": "684db81a82c73fdf7136d92f"
+  },
+  "etiquetas": [
+    "Bases de Datos"
+  ],
+  "archivos": [
+    {
+      "nombre": "bases.pdf",
+      "ruta": "archivos/bases.pdf",
+      "fechaSubida": "2025-06-14T00:00:00Z"
+    }
+  ],
+  "calificaciones": [],
+  "comentarios": [],
+  "cursoId": {
+    "$oid": "684dbc9182c73fdf7136d93c"
+  }
+},
+{
+  "_id": {
+    "$oid": "684dbf8782c73fdf7136d95c"
+  },
+  "titulo": "Introducción a Nginx",
+  "contenido": "Trabajo de conceptos básicos de servidores web.",
+  "fechaPublicacion": {
+    "$date": "2025-06-14T00:00:00.000Z"
+  },
+  "autorId": {
+    "$oid": "684db81a82c73fdf7136d930"
+  },
+  "etiquetas": [
+    "Distribuidos"
+  ],
+  "archivos": [
+    {
+      "nombre": "sd.pdf",
+      "ruta": "archivos/sd.pdf",
+      "fechaSubida": "2025-06-14T00:00:00Z"
+    }
+  ],
+  "calificaciones": [],
+  "comentarios": [],
+  "cursoId": {
+    "$oid": "684dbc9182c73fdf7136d93d"
+  }
+}]

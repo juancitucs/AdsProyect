@@ -1,0 +1,36 @@
+[{
+  "_id": {
+    "$oid": "684dbdc582c73fdf7136d94e"
+  },
+  "mensaje": "Nuevo trabajo publicado: Sistemas Distribuidos.",
+  "fechaEnvio": {
+    "$date": "2025-06-14T12:00:00.000Z"
+  },
+  "destinatarioId": {
+    "$oid": "684db81a82c73fdf7136d92e"
+  }
+},
+{
+  "_id": {
+    "$oid": "684dbdc582c73fdf7136d94f"
+  },
+  "mensaje": "Nuevo trabajo publicado: Bases de Datos II.",
+  "fechaEnvio": {
+    "$date": "2025-06-14T13:00:00.000Z"
+  },
+  "destinatarioId": {
+    "$oid": "684db81a82c73fdf7136d92f"
+  }
+},
+{
+  "_id": {
+    "$oid": "684dbdc582c73fdf7136d950"
+  },
+  "mensaje": "Nuevo trabajo publicado: Matemática IV.",
+  "fechaEnvio": {
+    "$date": "2025-06-14T14:00:00.000Z"
+  },
+  "destinatarioId": {
+    "$oid": "684db81a82c73fdf7136d930"
+  }
+}]

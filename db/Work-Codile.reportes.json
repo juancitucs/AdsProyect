@@ -1,0 +1,39 @@
+[{
+  "_id": {
+    "$oid": "684dbe0982c73fdf7136d955"
+  },
+  "tipo": "Actividad de Usuarios",
+  "contenido": "Reporte de actividad reciente de estudiantes.",
+  "fechaGeneracion": {
+    "$date": "2025-06-14T10:00:00.000Z"
+  },
+  "generadoPorId": {
+    "$oid": "684db81a82c73fdf7136d931"
+  }
+},
+{
+  "_id": {
+    "$oid": "684dbe0982c73fdf7136d956"
+  },
+  "tipo": "Trabajos Publicados",
+  "contenido": "Reporte mensual de trabajos subidos.",
+  "fechaGeneracion": {
+    "$date": "2025-06-14T10:00:00.000Z"
+  },
+  "generadoPorId": {
+    "$oid": "684db81a82c73fdf7136d931"
+  }
+},
+{
+  "_id": {
+    "$oid": "684dbe0982c73fdf7136d957"
+  },
+  "tipo": "Estadísticas del Sistema",
+  "contenido": "Reporte de uso general de la plataforma.",
+  "fechaGeneracion": {
+    "$date": "2025-06-14T10:00:00.000Z"
+  },
+  "generadoPorId": {
+    "$oid": "684db81a82c73fdf7136d931"
+  }
+}]
