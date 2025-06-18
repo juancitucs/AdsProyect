@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WorkCodile | Foro</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <script src="dashboard.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Topbar -->
+    <header class="header">
+      <div class="header-left">
+        <img src="imagenes/workcodile-perfil2.png" alt="Logo" class="logo" />
+        <span class="brand">Work Codile</span>
+      </div>
+      <div class="header-center">
+        <input type="search" id="search-input" placeholder="Buscar en Work Codile…" />
+      </div>
+      <div class="header-right">
+        <button id="open-modal" class="btn-create">Crear</button>
+        <a href="perfil.html" title="Mi perfil">
+          <img src="imagenes/workcodile-perfil2.png" alt="Estudiante" class="avatar" />
+        </a>
+      </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <nav>
+        <ul class="sidebar-menu">
+          <li id="menu-inicio" class="menu-item active">
+            <img src="imagenes/Inicio.png" alt="Inicio" class="menu-icon" />
+            <span>Inicio</span>
+          </li>
+          <li id="menu-explorar" class="menu-item">
+            <img src="imagenes/explorar.png" alt="Explorar" class="menu-icon" />          
+            <span>Explorar</span>
+          </li>
+          <li id="menu-favoritos" class="menu-item">
+            <img src="imagenes/cursos.png" alt="Cursos favoritos" class="menu-icon" />
+            <span>Cursos favoritos</span>
+          </li>
+          <li id="menu-soporte" class="menu-item">
+            <img src="imagenes/soporte.png" alt="Soporte" class="menu-icon" />
+            <span>Soporte</span>
+          </li>
+          <li id="menu-faq" class="menu-item">
+            <img src="imagenes/faq.png" alt="FAQ" class="menu-icon" />
+            <span>FAQ</span>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Feed -->
+    <main class="feed" id="feed"></main>
+
+    <!-- Rightbar -->
+    <aside class="rightbar">
+      <h4>Top usuarios</h4>
+      <ul id="top-users" class="user-list"></ul>
+    </aside>
+
+    <!-- FAB móvil -->
+    <button class="fab" id="fab">＋</button>
+
+    <!-- Modal Crear Post -->
+    <div class="modal" id="modal">
+      <div class="modal-box">
+        <button id="modal-close" class="modal-close">✖</button>
+        <h3>Nuevo post</h3>
+        <form id="post-form">
+          <label>Curso
+            <select id="post-course" required></select>
+          </label>
+          <label>Título
+            <input type="text" id="post-title" minlength="4" required />
+          </label>
+          <label>Contenido
+            <textarea id="post-body" rows="4" minlength="8" required></textarea>
+          </label>
+          <label>URL de imagen (opcional)
+            <input type="url" id="post-image" placeholder="" />
+          </label>
+          <img id="post-preview" class="img-preview" style="display:none" />
+          <button type="submit" id="btn-publish" class="btn-publish" disabled>Publicar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

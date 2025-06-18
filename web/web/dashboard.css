@@ -1,64 +1,46 @@
-/* === Tipografía y variables === */
+/* === Variables y tipografía === */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
-
 :root {
-  --font-base:   'Montserrat', sans-serif;
-  --bg:          #f6f7f8;
-  --card-bg:     #ffffff;
-  --border:      #e1e4e8;
-  --text:        #1a1a1b;
-  --secondary:   #26a65b;
-  --radius:      8px;
-  --gap:         1rem;
-  --sidebar-w:   250px;
-  --rightbar-w:  250px;
-  --header-h:    70px;
-  --logo-size:   40px;   /* Tamaño uniforme de logo y avatar */
+  --font-base:      'Montserrat', sans-serif;
+  --bg:             #f6f7f8;
+  --card-bg:        #ffffff;
+  --border:         #e1e4e8;
+  --text:           #1a1a1b;
+  --primary:        #26a65b;
+  --primary-light:  #e6f9f1;
+  --radius:         8px;
+  --gap:            1rem;
+  --sidebar-w:      250px;
+  --rightbar-w:     250px;
+  --header-h:       70px;
+  --logo-size:      50px;
 }
 
-/* Reset básico */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* Reset */
+* { margin:0; padding:0; box-sizing:border-box; }
 body {
   font-family: var(--font-base);
   background: var(--bg);
   color: var(--text);
-  height: 100vh;
-  overflow: hidden;
+  height:100vh;
+  overflow:hidden;
 }
 
-/* Grid en .container */
+/* Grid general */
 .container {
   display: grid;
-  width: 100%;
-  height: 100%;
-  grid-template-columns: var(--sidebar-w) 1fr var(--rightbar-w);
+  grid-template-columns: var(--sidebar-w) 1fr 280px;
   grid-template-rows: var(--header-h) 1fr;
   grid-template-areas:
-    "header  header  header"
-    "sidebar feed    right";
+    "header header header"
+    "sidebar feed right";
+  height:100%;
+  width:100%;
 }
 
-/* Oculta rightbar <1100px, muestra FAB */
-@media (max-width: 1100px) {
-  .container {
-    grid-template-columns: 1fr;
-    grid-template-rows: var(--header-h) 1fr;
-    grid-template-areas:
-      "header"
-      "feed";
-  }
-  .rightbar { display: none; }
-  .fab      { display: flex; }
-}
-
-/* ---------- Header ---------- */
+/* Header */
 .header {
   grid-area: header;
-  height: var(--header-h);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -66,13 +48,7 @@ body {
   background: var(--card-bg);
   border-bottom: 1px solid var(--border);
 }
-
-/* Logo izquierdo redondeado */
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
+.header-left { display:flex; align-items:center; gap:0.5rem; }
 .logo {
   width: var(--logo-size);
   height: var(--logo-size);
@@ -82,45 +58,28 @@ body {
 .brand {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--secondary);
+  color: var(--primary);
 }
-
-/* Buscador centrado y con ancho máximo */
-.header-center {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  padding: 0 var(--gap);
-}
+.header-center { flex:1; display:flex; justify-content:center; }
 .header-center input {
-  width: 100%;
-  max-width: 500px;         /* controla lo “achicado” de los costados */
-  height: calc(var(--header-h) * 0.5);
-  padding: 0 var(--gap);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  width:100%; max-width:500px; height:calc(var(--header-h)*0.5);
+  padding:0 var(--gap); border:1px solid var(--border);
+  border-radius:var(--radius);
 }
-
-/* Avatar derecho redondeado */
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
+.header-right { display:flex; align-items:center; gap:0.75rem; }
 .btn-create {
-  background: var(--secondary);
-  color: #fff;
-  border: none;
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius);
-  cursor: pointer;
+  background: var(--primary);
+  color:#fff; border:none;
+  padding:0.75rem 1rem;
+  border-radius:var(--radius);
+  cursor:pointer;
 }
 .avatar {
   width: var(--logo-size);
   height: var(--logo-size);
-  border-radius: 50%;
-  object-fit: cover;
-  cursor: pointer;
+  border-radius:50%;
+  object-fit:cover;
+  cursor:pointer;
 }
 
 /* ---------- Sidebar ---------- */
@@ -128,34 +87,38 @@ body {
   grid-area: sidebar;
   background: var(--card-bg);
   border-right: 1px solid var(--border);
-  padding: var(--gap);
-  overflow-y: auto;
+  padding: var(--gap) 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: left;
 }
-.nav-static,
-.nav-dynamic {
+.sidebar-menu {
   list-style: none;
   width: 100%;
 }
-.nav-item {
-  padding: 0.6rem;
-  margin: 0.25rem 0;
-  text-align: center;
+.menu-item {
+  display: flex;
+  align-items: center;
+  width: 90%;
+  margin: 0.5rem auto;
+  padding: 0.6rem 1rem;
   border-radius: var(--radius);
   cursor: pointer;
   transition: background 0.2s;
 }
-.nav-item:hover,
-.nav-item.active {
-  background: var(--secondary);
+.menu-item:hover {
+  background: var(--primary-light);
+}
+.menu-item.active {
+  background: var(--primary);
   color: #fff;
 }
-.nav-title {
-  margin: 1rem 0 0.5rem;
-  font-weight: 600;
-  color: #555;
+.menu-icon {
+  width: 25px;
+  height: 25px;
+  border-radius: 30%;
+  object-fit: cover;
+  margin-right: 0.75rem;
 }
 
 /* ---------- Feed ---------- */
@@ -216,6 +179,15 @@ body {
   font-size: 0.75rem;
   color: #777;
 }
+/* ---------- Coco-Chibi rating ---------- */
+.coco-rating{display:flex;gap:4px;cursor:pointer;}
+.coco-rating img{
+  width:24px;height:24px;object-fit:contain;filter:grayscale(100%);
+  transition:transform .2s,filter .2s;
+}
+.coco-rating img.active{filter:grayscale(0%);}
+.coco-rating img:hover{transform:scale(1.2);filter:grayscale(0%);}
+.coco-rating img:hover ~ img{transform:none;filter:grayscale(100%);}
 
 /* ---------- Rightbar ---------- */
 .rightbar {
@@ -225,20 +197,23 @@ body {
   padding: var(--gap);
   overflow-y: auto;
 }
-.rightbar h4 {
-  margin-bottom: 0.5rem;
-  font-weight: 600;
+.rightbar h4 { margin-bottom:0.5rem; font-weight:600; }
+
+/* Lista de usuarios top */
+.user-list { list-style:none; display:flex; flex-direction:column; gap:0.5rem; }
+.user-item {
+  display:flex; align-items:center; gap:0.6rem;
+  padding:0.45rem 0.6rem; border-radius:var(--radius);
+  transition:background 0.2s;
 }
-.recent-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+.user-item:hover { background:var(--primary-light); }
+.user-rank { font-weight:600; width:1.5rem; text-align:right; }
+.user-avatar {
+  width:32px; height:32px; border-radius:50%; object-fit:cover;
 }
-.recent-list li {
-  font-size: 0.85rem;
-  color: #555;
-}
+.user-info { flex:1; display:flex; flex-direction:column; }
+.user-name { font-weight:600; font-size:0.9rem; }
+.user-points { font-size:0.75rem; color:#555; }
 
 /* ---------- FAB y Modal ---------- */
 .fab {
@@ -306,7 +281,13 @@ body {
   border-radius: var(--radius);
   cursor: pointer;
 }
-
+/* Vista previa de imagen */
+.img-preview{
+  width:100%;
+  border-radius:var(--radius);
+  object-fit:cover;
+  aspect-ratio:16/9;
+  margin-top:.25rem;}
 
 
 
