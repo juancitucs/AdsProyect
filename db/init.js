@@ -1,22 +1,9 @@
 
-db = db.getSiblingDB('TEST'); // nombre de la BD
+db = db.getSiblingDB("TEST");
 
-db.users.drop(); // Limpia la colección si existe
-db.users.insertMany([
-  {
-    "_id": "20240001",
-    "nombre": "Ana",
-    "email": "ana@mail.com",
-    "contrasena": "123",
-    "tipo": "estudiante",
-    "perfil": { "bio": "", "foto": "", "intereses": [] }
-  },
-  {
-    "_id": "20240002",
-    "nombre": "Luis",
-    "email": "luis@mail.com",
-    "contrasena": "456",
-    "tipo": "estudiante",
-    "perfil": { "bio": "", "foto": "", "intereses": [] }
-  }
-]);
+db.usuarios.insertMany(require('/docker-entrypoint-initdb.d/Work-Codile.usuarios.json'));
+db.trabajos.insertMany(require('/docker-entrypoint-initdb.d/Work-Codile.trabajos.json'));
+db.cursos.insertMany(require('/docker-entrypoint-initdb.d/Work-Codile.cursos.json'));
+db.notificaciones.insertMany(require('/docker-entrypoint-initdb.d/Work-Codile.notificaciones.json'));
+db.reportes.insertMany(require('/docker-entrypoint-initdb.d/Work-Codile.reportes.json'));
+

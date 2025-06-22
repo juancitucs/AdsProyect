@@ -2,19 +2,18 @@
 // models/User.js
 const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema({
-  _id: String, // studentCode como clave
+const UserSchema = new mongoose.Schema({
+  _id: String,  // aquí guardas studentCode
   nombre: String,
-  email: String,
-  contrasena: String,
+  email: { type: String, unique: true, required: true },
+  password: { type: String, required: true },  // renombrado desde 'contrasena'
   tipo: String,
   perfil: {
     bio: String,
     foto: String,
     intereses: [String]
   }
-}, {
-  collection: 'Work-Codile.usuarios'
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', UserSchema);
+

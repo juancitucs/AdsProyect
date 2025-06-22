@@ -23,7 +23,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
   tabRegister.addEventListener('click', () => showForm('register'));
   tabLogin.addEventListener('click', () => showForm('login'));
+  // REGISTRO FUNCIONAL
+  formRegister.addEventListener('submit', async e => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(e.target));
+    console.log('→ payload register:', data);
 
+    try {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        const resData = await response.json();
+        alert('✅ ' + resData.message + ' (ID: ' + resData.id + ')');
+        // Opcional: después del registro, mostrar la pestaña de login
+        tabLogin.click();
+      } else {
+        const error = await response.json();
+        alert('❌ Error registro: ' + (error.error || 'Revise los datos'));
+      }
+    } catch (err) {
+      console.error('❌ Error en registro:', err);
+      alert('❌ Error de red al registrar usuario');
+    }
+  });
   // LOGIN FUNCIONAL
   formLogin.addEventListener('submit', async e => {
     e.preventDefault();
