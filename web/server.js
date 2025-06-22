@@ -36,9 +36,11 @@ mongoose.connect(uri, {
 // Rutas API
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
+const postRoutes = require('./routes/posts');
 
 app.use('/api', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/posts', express.json(), postRoutes);
 
 // Servir frontend
 app.use(express.static(path.join(__dirname, 'web')));
@@ -50,4 +52,5 @@ const PORT = process.env.PORT || 80;
 app.listen(PORT, () => {
   console.log(`🚀 Servidor escuchando en http://localhost:${PORT}`);
 });
+
 
