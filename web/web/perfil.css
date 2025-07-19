@@ -180,6 +180,76 @@ body {
   color: #c00;
 }
 
+/* ---------- FAB y Modal ---------- */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gap);
+}
+.modal.show {
+  display: flex;
+}
+.modal-box {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: var(--gap);
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+}
+.modal-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  background: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.modal-box h3 {
+  margin-bottom: var(--gap);
+  font-weight: 600;
+}
+.modal-box form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.modal-box label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+}
+.modal-box input,
+.modal-box textarea,
+.modal-box select {
+  margin-top: 0.3rem;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.btn-publish {
+  align-self: flex-end;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+/* Vista previa de imagen */
+.img-preview {
+  width: 100%;
+  border-radius: var(--radius);
+  object-fit: cover;
+  aspect-ratio: 16/9;
+  margin-top: 0.25rem;
+}
+
 /* Achievements sidebar */
 .profile-aside {
   background: var(--card-bg);

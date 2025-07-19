@@ -204,6 +204,36 @@ body {
   font-size: 0.75rem;
   color: #777;
 }
+/* Post meta information (author, course, date) */
+.post-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #777;
+  margin-top: 0.5rem; /* Add some space below content/image */
+}
+
+.post-author-avatar {
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0; /* Prevent shrinking in flex containers */
+  display: block;
+  aspect-ratio: 1 / 1 !important;
+}
+
+.post-author-link {
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.post-author-link:hover {
+  text-decoration: underline;
+}
+
 /* ---------- Coco-Chibi rating ---------- */
 .coco-rating {
   display: flex;

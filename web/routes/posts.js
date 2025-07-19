@@ -5,6 +5,20 @@ const Post = require('../models/Post');
 const User = require('../models/User'); // Import User model
 const authenticateToken = require('../middleware/auth'); // Import the middleware
 
+/* ---------- GET /api/posts/:id ---------- */
+router.get('/:id', async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id).lean();
+    if (!post) {
+      return res.status(404).json({ error: 'Post no encontrado' });
+    }
+    res.json(post);
+  } catch (error) {
+    console.error('Error al obtener post por ID:', error);
+    res.status(500).json({ error: 'Error interno al obtener post' });
+  }
+});
+
 /* ---------- GET /api/posts?course=... ---------- */
 router.get('/', async (req, res) => {
   try {
@@ -63,33 +77,88 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
-/* ---------- PATCH /api/posts/:id (votos / rating) ---------- */
-router.patch('/:id', async (req, res) => {
+/* ---------- PATCH /api/posts/:id (votos / rating / update fields) ---------- */
+router.patch('/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
+  const { title, content, image, course } = req.body;
 
-  /* votos */
-  if (req.body.$inc?.votes) {
-    const p = await Post.findByIdAndUpdate(id, { $inc: { votes: req.body.$inc.votes } }, { new: true });
-    return res.json({ votes: p.votes });
+  try {
+    const post = await Post.findById(id);
+
+    if (!post) {
+      return res.status(404).json({ error: 'Post no encontrado' });
+    }
+
+    // Verificar que el usuario autenticado es el autor del post
+    if (post.autor.toString() !== req.user.id) {
+      return res.status(403).json({ error: 'No autorizado para modificar este post' });
+    }
+
+    /* votos */
+    if (req.body.$inc?.votes) {
+      post.votes += req.body.$inc.votes;
+      await post.save();
+      return res.json({ votes: post.votes });
+    }
+
+    /* rating */
+    if ('rating' in req.body) {
+      const val = Number(req.body.rating);
+      post.ratingTotal += val;
+      post.ratingCount += 1;
+      await post.save();
+
+      return res.json({
+        ratingTotal: post.ratingTotal,
+        ratingCount: post.ratingCount,
+        userRating: val
+      });
+    }
+
+    // Actualizar campos del post
+    if (title) post.title = title;
+    if (content) post.content = content;
+    if (image) post.image = image;
+    if (course) post.course = course;
+
+    await post.save();
+
+    // Re-populate author for the response
+    const author = await User.findById(post.autor).lean();
+    const populatedPost = {
+      ...post.toObject(),
+      autor: author || { nombre: 'Usuario Desconocido' }
+    };
+
+    res.json(populatedPost);
+
+  } catch (error) {
+    console.error('Error al actualizar post:', error);
+    res.status(500).json({ error: 'Error interno al actualizar post' });
   }
+});
 
-  /* rating */
-  if ('rating' in req.body) {
-    const val = Number(req.body.rating);
-    const p = await Post.findById(id);
+/* ---------- DELETE /api/posts/:id ---------- */
+router.delete('/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const post = await Post.findById(id);
 
-    p.ratingTotal += val;
-    p.ratingCount += 1;
-    await p.save();
+    if (!post) {
+      return res.status(404).json({ error: 'Post no encontrado' });
+    }
 
-    return res.json({
-      ratingTotal: p.ratingTotal,
-      ratingCount: p.ratingCount,
-      userRating: val
-    });
+    // Verificar que el usuario autenticado es el autor del post
+    if (post.autor.toString() !== req.user.id) {
+      return res.status(403).json({ error: 'No autorizado para eliminar este post' });
+    }
+
+    await Post.findByIdAndDelete(id);
+    res.status(200).json({ message: 'Post eliminado exitosamente' });
+  } catch (error) {
+    console.error('Error al eliminar post:', error);
+    res.status(500).json({ error: 'Error interno al eliminar post' });
   }
-
-  res.status(400).json({ error: 'Bad PATCH body' });
 });
 
 module.exports = router;

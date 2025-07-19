@@ -212,7 +212,12 @@ function createCard(p) {
   body.appendChild(createRatingBar(p));
 
   const small = document.createElement('small');
-  small.textContent = `${p.autor ? p.autor.nombre : 'Usuario desconocido'} • ${p.course} • ${new Date(p.time).toLocaleString()}`;
+  small.className = 'post-meta'; // Add a class for styling
+  small.innerHTML = `
+    <img src="${p.autor?.perfil?.foto || 'imagenes/usuario.png'}" class="post-author-avatar" alt="${p.autor?.nombre || 'Usuario desconocido'}">
+    <a href="perfil.html?id=${p.autor?._id}" class="post-author-link">${p.autor?.nombre || 'Usuario desconocido'}</a>
+    • ${p.course} • ${new Date(p.time).toLocaleString()}
+  `;
   body.appendChild(small);
 
   card.append(vote, body);

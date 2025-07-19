@@ -1,92 +1,104 @@
-document.addEventListener('DOMContentLoaded', () => {
-  // --- Tabs ---
-  const tabs      = document.querySelectorAll('.tab-btn');
-  const contents  = document.querySelectorAll('.tab-content');
 
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(b => b.classList.remove('active'));
-      tab.classList.add('active');
-      const target = tab.dataset.tab;
-      contents.forEach(sec => {
-        sec.id === `tab-${target}`
-          ? sec.classList.add('active')
-          : sec.classList.remove('active');
-      });
-    });
-  });
+document.addEventListener('DOMContentLoaded', async () => {
+  /* ---------------- Utilidades ---------------- */
+  const qs = new URLSearchParams(location.search);
+  const getToken = () => localStorage.getItem('jwtToken');
 
-  // --- Avatar preview ---
-  const avatarInput   = document.getElementById('avatar-input');
+  const apiFetch = async (url, options = {}) => {
+    const headers = { 'Content-Type': 'application/json', ...options.headers };
+    const tkn = getToken();
+    if (tkn) headers.Authorization = `Bearer ${tkn}`;
+    const res = await fetch(url, { ...options, headers });
+    if (!res.ok) throw new Error((await res.json()).error || res.statusText);
+    return res.json();
+  };
+
+  /* ---------------- Elementos DOM ------------- */
+  const pageTitle = document.getElementById('page-title');
+  const tabs = document.querySelectorAll('.tab-btn');
+  const contents = document.querySelectorAll('.tab-content');
   const avatarPreview = document.getElementById('avatar-preview');
-  avatarInput.addEventListener('change', e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = evt => avatarPreview.src = evt.target.result;
-    reader.readAsDataURL(file);
-  });
-
-  // --- Back button ---
-  document.getElementById('back-btn')
-    .addEventListener('click', () => history.back());
-
-  // --- Datos de ejemplo ---
-  const examplePosts = [
-    'Cómo resolver el ejercicio de álgebra',
-    'Mis apuntes de física: movimiento circular',
-    'Proyecto en JavaScript'
-  ];
-  const exampleComments = [
-    '¡Gran aporte en tu post de JavaScript!',
-    'Gracias por compartir tus apuntes.',
-    '¿Podrías explicar la derivada de esa función?'
-  ];
-
-  // --- Render Posts con delete ---
+  const usernameInp = document.getElementById('username');
+  const emailInp = document.getElementById('email');
+  const bioInp = document.getElementById('bio');
   const postsList = document.getElementById('posts-list');
-  examplePosts.forEach(text => {
-    const li = document.createElement('li');
-    const span = document.createElement('span');
-    span.textContent = text;
-    const btn = document.createElement('button');
-    btn.className = 'delete-btn';
-    btn.textContent = '×';
-    btn.title = 'Eliminar post';
-    btn.addEventListener('click', () => {
-      if (confirm('¿Estás seguro de eliminar este post?')) {
-        li.remove();
-      }
-    });
-    li.append(span, btn);
-    postsList.appendChild(li);
-  });
 
-  // --- Render Comments con delete ---
-  const commentsList = document.getElementById('comments-list');
-  exampleComments.forEach(text => {
-    const li = document.createElement('li');
-    const span = document.createElement('span');
-    span.textContent = text;
-    const btn = document.createElement('button');
-    btn.className = 'delete-btn';
-    btn.textContent = '×';
-    btn.title = 'Eliminar comentario';
-    btn.addEventListener('click', () => {
-      if (confirm('¿Estás seguro de eliminar este comentario?')) {
-        li.remove();
-      }
-    });
-    li.append(span, btn);
-    commentsList.appendChild(li);
-  });
+  /* ---------------- Estado -------------------- */
+  let profileUser = null;   // usuario mostrado
 
-  // --- Submit formulario editar perfil ---
-  document.getElementById('profile-form')
-    .addEventListener('submit', e => {
-      e.preventDefault();
-      alert('Perfil actualizado (simulado).');
-    });
+  /* ---------------- Funciones UI -------------- */
+  const populateProfile = (u) => {
+    usernameInp.value = u.nombre ?? '';
+    emailInp.value = u.email ?? '';
+    bioInp.value = u.perfil?.bio ?? '';
+    avatarPreview.src = u.perfil?.foto ?? 'imagenes/workcodile-perfil2.png';
+    
+    pageTitle.textContent = `Perfil de ${u.nombre}`;
+  };
+
+  const renderPosts = (posts) => {
+    postsList.innerHTML = posts.length
+      ? posts.map(p =>
+        `<li><span>${p.title}</span></li>`
+      ).join('')
+      : '<li>No hay posts.</li>';
+  };
+
+  /* ---------------- Cargar datos -------------- */
+  async function loadData() {
+    try {
+      // 1. Obtener el ID del perfil de la URL
+      const profileId = qs.get('id');
+      if (!profileId) {
+        alert('ID de perfil no especificado.');
+        window.location = '/index.html'; // Redirigir si no hay ID
+        return;
+      }
+
+      // 2. Cargar el perfil del usuario
+      profileUser = await apiFetch(`/api/users/${profileId}`);
+      populateProfile(profileUser);
+
+      // 3. Asegurarse de que la pestaña de posts esté activa por defecto
+      tabs.forEach(t => t.classList.remove('active'));
+      contents.forEach(c => c.classList.remove('active'));
+      document.querySelector('[data-tab="posts"]').classList.add('active');
+      document.getElementById('tab-posts').classList.add('active');
+
+      // 4. Cargar posts inicialmente
+      await fetchUserPosts();
+    } catch (err) {
+      alert(`Error: ${err.message || 'no se pudo cargar el perfil'}`);
+      window.location = '/index.html';
+    }
+  }
+
+  /* ---------------- Posts --------------------- */
+  async function fetchUserPosts() {
+    try {
+      const posts = await apiFetch(`/api/users/${profileUser._id}/posts`);
+      renderPosts(posts);
+    } catch (err) { console.error(err); }
+  }
+
+  /* ---------------- Eventos ------------------- */
+  // Navegación entre tabs
+  tabs.forEach(btn => btn.addEventListener('click', () => {
+    // Solo permitir navegación si no es la pestaña de edición (que ya no existe)
+    tabs.forEach(b => b.classList.remove('active'));
+    contents.forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+
+    if (btn.dataset.tab === 'posts') fetchUserPosts();
+  }));
+
+  document.getElementById('back-btn').onclick = () => history.back();
+
+  const backBtn = document.getElementById('back-btn');
+  if (backBtn) backBtn.onclick = () => history.back();
+
+  /* ---------------- Init --------------------- */
+  loadData();
 });
-
 

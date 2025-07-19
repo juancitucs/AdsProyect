@@ -3,7 +3,7 @@ services:
   web:
     build: .
     ports:
-      - "8080:80"
+      - "8080:8080"
     volumes:
       - ./web:/app
       - web_node_modules:/app/node_modules
@@ -15,6 +15,7 @@ services:
       DB_NAME:     TEST
       DB_USER:     root
       DB_PASSWORD: 1234
+      JWT_SECRET:  'a_very_secret_and_secure_key_that_should_be_generated'
    
   mongodb:
     image: mongo:7.0
