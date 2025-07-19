@@ -125,6 +125,7 @@ body {
   border-radius: var(--radius);
   cursor: pointer;
   transition: background 0.2s;
+  flex-wrap: wrap;
 }
 .menu-item:hover {
   background: var(--primary-light);
@@ -353,7 +354,7 @@ body {
 .btn-publish {
   align-self: flex-end;
   background: var(--secondary);
-  color: #fff;
+  color: #26a65b;
   border: none;
   padding: 0.45rem 1rem;
   border-radius: var(--radius);
@@ -374,6 +375,7 @@ body {
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
+  width: 100%;
 }
 
 .arrow {
@@ -387,6 +389,7 @@ body {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.25s ease;
+  width: 100%;
 }
 
 .cursos-lista li {

@@ -32,6 +32,7 @@ const imgPrev = document.getElementById('post-preview');
 const btnPublish = document.getElementById('btn-publish');
 const topUsersUL = document.getElementById('top-users');
 
+const menuCursos = document.getElementById('menu-cursos');
 const arrowCursos = document.getElementById('arrow-cursos');
 const listaCursos = document.getElementById('lista-cursos');
 
@@ -64,10 +65,13 @@ function populateCursosSidebar() {
 
 /* ---------- abrir/cerrar lista + click en curso -- */
 function attachSidebarHandlers() {
-  arrowCursos.parentElement.addEventListener('click', () => {
-    const open = listaCursos.style.maxHeight;
-    if (open) closeCursos();
-    else openCursos();
+  menuCursos.addEventListener('click', () => {
+    const isOpen = listaCursos.style.maxHeight;
+    if (isOpen) {
+      closeCursos();
+    } else {
+      openCursos();
+    }
   });
 
   listaCursos.addEventListener('click', async e => {
@@ -148,6 +152,7 @@ function handleImagePreview() {
 }
 
 const buildPostObject = () => ({
+  autor: autorPost.value,
   course: courseSel.value,
   title: titleInp.value.trim(),
   content: bodyInp.value.trim(),
