@@ -15,16 +15,7 @@ services:
       DB_NAME:     TEST
       DB_USER:     root
       DB_PASSWORD: 1234
-    command: >
-      sh -c "
-        echo 'Waiting for MongoDB to be ready...'
-        while ! nc -z mongodb 27017; do
-          sleep 1
-        done
-        echo 'MongoDB is ready!'
-        node server.js
-      "
-
+   
   mongodb:
     image: mongo:7.0
     restart: always

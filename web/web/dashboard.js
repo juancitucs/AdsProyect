@@ -152,7 +152,6 @@ function handleImagePreview() {
 }
 
 const buildPostObject = () => ({
-  autor: autorPost.value,
   course: courseSel.value,
   title: titleInp.value.trim(),
   content: bodyInp.value.trim(),

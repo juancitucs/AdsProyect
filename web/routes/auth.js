@@ -1,8 +1,10 @@
 
-// routes/auth.js
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const jwt = require('jsonwebtoken');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret'; // Use environment variable or a placeholder
 
 // Ruta de login usando código de estudiante
 router.post('/login', async (req, res) => {
@@ -21,9 +23,13 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
-    // Devolvemos sólo los datos esenciales
+    // Generar JWT
+    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
+
+    // Devolvemos sólo los datos esenciales y el token
     res.json({
       message: 'Login exitoso',
+      token,
       user: {
         id: user._id,
         nombre: user.nombre,
