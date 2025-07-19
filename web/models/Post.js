@@ -1,6 +1,10 @@
-
 const mongoose = require('mongoose');
 const PostSchema = new mongoose.Schema({
+  autor: {
+    type: String,
+    ref: 'User',
+    required: true
+  },
   course: String,
   title: String,
   content: String,
@@ -10,6 +14,5 @@ const PostSchema = new mongoose.Schema({
   ratingTotal: Number,
   ratingCount: Number,
   userRating: Number,
-  userId: String,   // opcional: quién lo creó
 });
 module.exports = mongoose.model('Post', PostSchema);

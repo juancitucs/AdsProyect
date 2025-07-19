@@ -103,8 +103,20 @@ async function loadPosts(course) {
 }
 
 async function apiCreate(body) {
+  const token = localStorage.getItem('jwtToken'); // Retrieve the token
+  if (!token) {
+    console.error('No JWT token found. User not authenticated.');
+    // Optionally, redirect to login or show an error message
+    return null; 
+  }
+
   return (await fetch('/api/posts', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}` // Add the Authorization header
+    }, 
+    body: JSON.stringify(body)
   })).json();
 }
 
@@ -130,6 +142,12 @@ function setupModalHandlers() {
     e.preventDefault();
     const newPost = buildPostObject();
     const saved = await apiCreate(newPost);
+
+    if (saved.error) {
+      console.error('Error from server:', saved.details);
+      alert(`Error al publicar: ${saved.details}`);
+      return;
+    }
 
     postsByCourse[saved.course].unshift(saved);
     if (saved.course === currentCourse) renderFeed(postsByCourse[currentCourse]);
@@ -194,7 +212,7 @@ function createCard(p) {
   body.appendChild(createRatingBar(p));
 
   const small = document.createElement('small');
-  small.textContent = `${p.course} • ${new Date(p.time).toLocaleString()}`;
+  small.textContent = `${p.autor ? p.autor.nombre : 'Usuario desconocido'} • ${p.course} • ${new Date(p.time).toLocaleString()}`;
   body.appendChild(small);
 
   card.append(vote, body);

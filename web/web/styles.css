@@ -1,20 +1,24 @@
 /* styles2.css */
 
 /* 1) Importar tipografía */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
+
+@view-transition {
+  navigation: auto;
+}
 
 /* 2) Variables de tema */
 :root {
-  --font-heading:    'Montserrat', sans-serif;
-  --font-body:       'Montserrat', sans-serif;
-  --color-primary:   #26A65B;
-  --color-secondary: #F57C00;
-  --color-neutral:   #333333;
-  --color-gray:      #BBBBBB;
-  --color-bg:        #ffffff;
-  --color-card-bg:   #FFFFFF;
-  --radius:          8px;
-  --spacing:         1rem;
+  --font-heading: "Montserrat", sans-serif;
+  --font-body: "Montserrat", sans-serif;
+  --color-primary: #26a65b;
+  --color-secondary: #f57c00;
+  --color-neutral: #333333;
+  --color-gray: #bbbbbb;
+  --color-bg: #ffffff;
+  --color-card-bg: #ffffff;
+  --radius: 8px;
+  --spacing: 1rem;
 }
 
 /* 3) Reset básico */
@@ -43,7 +47,7 @@ body {
   height: 90vh;
   background: var(--color-card-bg);
   border-radius: var(--radius);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
@@ -116,7 +120,9 @@ body {
   font-size: 0.9rem;
   color: var(--color-neutral);
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 .form-toggle button.active {
   background: var(--color-primary);
@@ -162,14 +168,11 @@ body {
   border: none;
   border-radius: var(--radius);
   cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
+  transition:
+    background 0.2s,
+    transform 0.2s;
 }
 .btn-primary:hover {
   background: var(--color-secondary);
   transform: translateY(-1px);
 }
-
-
-
-
-

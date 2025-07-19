@@ -1,20 +1,24 @@
 /* === Tipografía y variables === */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
-
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap");
+@view-transition {
+  navigation: auto;
+}
 :root {
-  --font-base:   'Montserrat', sans-serif;
-  --bg:          #f6f7f8;
-  --card-bg:     #ffffff;
-  --border:      #e1e4e8;
-  --text:        #1a1a1b;
-  --accent:      #26a65b;
-  --radius:      8px;
-  --gap:         1rem;
+  --font-base: "Montserrat", sans-serif;
+  --bg: #f6f7f8;
+  --card-bg: #ffffff;
+  --border: #e1e4e8;
+  --text: #1a1a1b;
+  --accent: #26a65b;
+  --radius: 8px;
+  --gap: 1rem;
 }
 
 /* Reset */
 * {
-  margin: 0; padding: 0; box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 body {
   font-family: var(--font-base);
@@ -69,7 +73,9 @@ body {
   border-radius: var(--radius);
   cursor: pointer;
   font-weight: 600;
-  transition: background 0.2s, border-color 0.2s;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
 }
 .tab-btn.active {
   background: var(--accent);
@@ -78,8 +84,12 @@ body {
 }
 
 /* Contenidos */
-.tab-content { display: none; }
-.tab-content.active { display: block; }
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}
 
 /* Form Edit Profile */
 .profile-form {
@@ -98,7 +108,8 @@ body {
   gap: var(--gap);
 }
 .avatar-preview {
-  width: 96px; height: 96px;
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--accent);
@@ -196,5 +207,3 @@ body {
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
-
-

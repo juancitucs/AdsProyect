@@ -1,5 +1,9 @@
 /* === Variables y tipografía === */
+
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap");
+@view-transition {
+  navigation: auto;
+}
 :root {
   --font-base: "Montserrat", sans-serif;
   --bg: #f6f7f8;

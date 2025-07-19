@@ -67,8 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (response.ok) {
         const resData = await response.json();
         console.log('✅ Login exitoso:', resData);
-        // Guardar info si se quiere mantener sesión
-        // localStorage.setItem('user', JSON.stringify(resData.user));
+        localStorage.setItem('jwtToken', resData.token); // Store the JWT
+        localStorage.setItem('user', JSON.stringify(resData.user)); // Keep user info if needed
         window.location.href = 'dashboard.html';
       } else {
         const error = await response.json();

@@ -1,20 +1,22 @@
 /* styles2.css */
 
 /* 1) Importar tipografía */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
-
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
+@view-transition {
+  navigation: auto;
+}
 /* 2) Variables de tema */
 :root {
-  --font-heading: 'Montserrat', sans-serif;
-  --font-body:    'Montserrat', sans-serif;
-  --color-primary:   #26A65B;   /* Verde principal */
-  --color-secondary: #F57C00;   /* Naranja secundario */
-  --color-neutral:   #333333;   /* Gris oscuro */
-  --color-gray:      #BBBBBB;   /* Gris claro para bordes */
-  --color-bg:        #ffffff;   /* Fondo de página */
-  --color-card-bg:   #FFFFFF;   /* Fondo de tarjetas/form */
-  --radius:          8px;
-  --spacing:         1rem;
+  --font-heading: "Montserrat", sans-serif;
+  --font-body: "Montserrat", sans-serif;
+  --color-primary: #26a65b; /* Verde principal */
+  --color-secondary: #f57c00; /* Naranja secundario */
+  --color-neutral: #333333; /* Gris oscuro */
+  --color-gray: #bbbbbb; /* Gris claro para bordes */
+  --color-bg: #ffffff; /* Fondo de página */
+  --color-card-bg: #ffffff; /* Fondo de tarjetas/form */
+  --radius: 8px;
+  --spacing: 1rem;
 }
 
 /* 3) Reset básico */
@@ -67,7 +69,7 @@ body {
 .hero-content {
   background: var(--color-card-bg);
   border-radius: var(--radius) 0 0 var(--radius); /* suavizamos solo el lado izquierdo */
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   padding: calc(var(--spacing) * 2);
   display: flex;
   flex-direction: column;
@@ -115,7 +117,9 @@ body {
   font-size: 0.95rem;
   color: var(--color-neutral);
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 .form-toggle button.active {
   background: var(--color-primary);
@@ -160,7 +164,9 @@ body {
   border: none;
   border-radius: var(--radius);
   cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
+  transition:
+    background 0.2s,
+    transform 0.2s;
 }
 .btn-primary:hover {
   background: var(--color-secondary);
@@ -170,19 +176,19 @@ body {
 .hero-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;             /* espacio pequeño entre icono y texto */
-  margin-bottom: 0.75rem;  /* acerca el bloque al párrafo siguiente */
+  gap: 0.5rem; /* espacio pequeño entre icono y texto */
+  margin-bottom: 0.75rem; /* acerca el bloque al párrafo siguiente */
 }
 
 /* 13) Ajustes al logo */
 .brand-logo {
-  width: 100px;     /* un poco más pequeño para que no flote */
+  width: 100px; /* un poco más pequeño para que no flote */
   height: 100px;
 }
 
 /* 14) Ajustes al título dentro del header */
 .hero-header h1 {
-  font-size: 1.75rem;     /* un pelín más pequeño y compacto */
+  font-size: 1.75rem; /* un pelín más pequeño y compacto */
   line-height: 1.2;
   position: relative;
   margin: 0;
@@ -193,13 +199,12 @@ body {
 
 /* 15) Línea de acento bajo el título */
 .hero-header h1::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   bottom: 0;
-  width: 40px;               /* largo de la línea */
+  width: 40px; /* largo de la línea */
   height: 3px;
   background: var(--color-primary);
   border-radius: 2px;
 }
-
