@@ -168,6 +168,25 @@ body {
 .item-list li:last-child {
   border-bottom: none;
 }
+
+.post-title-link {
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--text);
+  transition: transform 0.2s ease, color 0.2s ease;
+  display: inline-block; /* Needed for transform to work */
+}
+
+.post-title-link:hover {
+  transform: scale(1.02);
+  color: var(--accent);
+}
+
+.post-title-link:active {
+  transform: scale(0.98);
+  color: var(--primary); /* A slightly different color on click */
+}
+
 .delete-btn {
   background: none;
   border: none;

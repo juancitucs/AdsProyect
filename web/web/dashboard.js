@@ -121,9 +121,25 @@ async function apiCreate(body) {
 }
 
 async function apiPatch(id, patchBody) {
-  return (await fetch(`/api/posts/${id}`, {
-    method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(patchBody)
-  })).json();
+  const token = localStorage.getItem('jwtToken'); // Retrieve the token
+  if (!token) {
+    console.error('No JWT token found. User not authenticated for PATCH.');
+    return null; 
+  }
+
+  const url = `/api/posts/${id}`;
+  const options = {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}` // Add the Authorization header
+    },
+    body: JSON.stringify(patchBody)
+  };
+
+  console.log('apiPatch - Sending request:', url, options);
+
+  return (await fetch(url, options)).json();
 }
 
 /* =====================  Modal & publicación  ================= */
@@ -190,17 +206,6 @@ function createCard(p) {
   const card = document.createElement('div');
   card.className = 'post';
 
-  /* votos */
-  const vote = document.createElement('div');
-  vote.className = 'vote';
-  vote.innerHTML =
-    `<button class="up">▲</button>
-     <span class="score">${p.votes}</span>
-     <button class="down">▼</button>`;
-
-  vote.querySelector('.up').addEventListener('click', () => votePost(p, +1, vote));
-  vote.querySelector('.down').addEventListener('click', () => votePost(p, -1, vote));
-
   /* cuerpo */
   const body = document.createElement('div');
   body.className = 'post-body';
@@ -220,42 +225,89 @@ function createCard(p) {
   `;
   body.appendChild(small);
 
-  card.append(vote, body);
-  return card;
-}
+  card.append(body);
 
-/* votos ▲ / ▼ */
-async function votePost(post, delta, domVote) {
-  const { votes } = await apiPatch(post._id, { $inc: { votes: delta } });
-  post.votes = votes;
-  domVote.querySelector('.score').textContent = votes;
+  // Make the post body clickable to navigate to post.html
+  body.addEventListener('click', () => {
+    window.location.href = `post.html?id=${p._id}`;
+  });
+
+  return card;
 }
 
 /* =====================  Rating de cocos  ===================== */
 function createRatingBar(post) {
-  const div = document.createElement('div'); div.className = 'coco-rating';
-  highlight(div, post.userRating || avg(post));
+  const div = document.createElement('div');
+  div.className = 'coco-rating-container'; // Use a container for flexibility
 
-  for (let i = 1; i <= 5; i++) {
-    const img = document.createElement('img');
-    img.src = COCO_ICON; img.dataset.val = i;
+  if (post.hasRated) {
+    // If user has rated, display green icon and numerical average
+    const ratedDisplay = document.createElement('div');
+    ratedDisplay.className = 'rated-display';
+    ratedDisplay.innerHTML = `
+      <img src="imagenes/cocodrilo_highres.jpg" class="rated-icon" alt="Rated">
+      <span class="rated-average">${post.averageRating.toFixed(1)}/5</span>
+    `;
+    div.appendChild(ratedDisplay);
+  } else {
+    // If user has not rated, display interactive coco-rating icons
+    for (let i = 1; i <= 5; i++) {
+      const img = document.createElement('img');
+      img.src = COCO_ICON; img.dataset.val = i;
+      img.className = 'coco-rating-icon'; // Add a class for styling
 
-    img.onmouseenter = () => highlight(div, i);
-    img.onmouseleave = () => highlight(div, post.userRating || avg(post));
-    img.onclick = () => rate(post, i, div);
+      img.onmouseenter = () => highlight(div, i);
+      img.onmouseleave = () => highlight(div, post.averageRating); // Revert to average on mouseleave
+      img.onclick = (e) => {
+        e.stopPropagation(); // Stop event from bubbling up to the post body
+        rate(post, i, div);
+      };
 
-    div.appendChild(img);
+      div.appendChild(img);
+    }
+    highlight(div, post.averageRating); // Initial highlight of average
   }
   return div;
 }
 
-const highlight = (c, v) => [...c.children].forEach(img => img.classList.toggle('active', img.dataset.val <= v));
-const avg = p => p.ratingCount ? Math.round(p.ratingTotal / p.ratingCount) : 0;
+const highlight = (c, v) => {
+  // Only highlight if the container has interactive icons
+  if (c.querySelector('.coco-rating-icon')) {
+    [...c.querySelectorAll('.coco-rating-icon')].forEach(img => img.classList.toggle('active', img.dataset.val <= v));
+  }
+};
+const avg = p => p.ratingCount > 0 ? (p.ratingTotal / p.ratingCount) : 0; // Keep avg for clarity, though averageRating is now stored
 
 async function rate(post, val, container) {
+  console.log('Sending rating update for post:', post._id, 'with value:', val);
   const upd = await apiPatch(post._id, { rating: val });
-  Object.assign(post, upd);   // ratingTotal / ratingCount / userRating
-  highlight(container, val);
+
+  if (upd.error) {
+    // Apply error styling to icons
+    [...container.querySelectorAll('.coco-rating-icon')].forEach(icon => {
+      icon.classList.add('error');
+    });
+
+    // Remove error styling after a delay
+    setTimeout(() => {
+      [...container.querySelectorAll('.coco-rating-icon')].forEach(icon => {
+        icon.classList.remove('error');
+      });
+    }, 1000); // Tremble for 1 second
+    return;
+  }
+
+  Object.assign(post, upd);   // ratingTotal / ratingCount / averageRating / hasRated
+
+  // After rating, replace icons with numerical average display
+  container.innerHTML = ''; // Clear existing icons
+  const ratedDisplay = document.createElement('div');
+  ratedDisplay.className = 'rated-display';
+  ratedDisplay.innerHTML = `
+    <img src="imagenes/cocodrilo_highres.jpg" class="rated-icon" alt="Rated">
+    <span class="rated-average">${post.averageRating.toFixed(1)}/5</span>
+  `;
+  container.appendChild(ratedDisplay);
 }
 
 /* =====================  Búsqueda  ============================ */

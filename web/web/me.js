@@ -80,8 +80,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const renderPosts = (posts) => {
     postsList.innerHTML = posts.length
       ? posts.map(p =>
-        `<li>
-           <span>${p.title}</span>
+        `<li data-post-id="${p._id}">
+           <span class="post-title-link">${p.title}</span>
            <div class="post-actions">
              <button class="edit-btn" data-id="${p._id}">✏️</button>
              <button class="delete-btn" data-id="${p._id}">🗑️</button>
@@ -89,6 +89,14 @@ document.addEventListener('DOMContentLoaded', async () => {
          </li>`
       ).join('')
       : '<li>No hay posts.</li>';
+
+    // Add event listener for post title clicks
+    postsList.querySelectorAll('.post-title-link').forEach(span => {
+      span.addEventListener('click', (e) => {
+        const postId = e.target.closest('li').dataset.postId;
+        window.location.href = `post.html?id=${postId}`;
+      });
+    });
 
     // Add event listeners to delete buttons
     postsList.querySelectorAll('.delete-btn').forEach(button => {

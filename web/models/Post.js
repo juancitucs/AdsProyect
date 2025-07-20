@@ -13,6 +13,12 @@ const PostSchema = new mongoose.Schema({
   votes: Number,
   ratingTotal: Number,
   ratingCount: Number,
-  userRating: Number,
+  averageRating: Number,
+  ratings: [
+    {
+      userId: { type: String, required: true },
+      value: { type: Number, required: true, min: 1, max: 5 }
+    }
+  ]
 });
 module.exports = mongoose.model('Post', PostSchema);

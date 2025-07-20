@@ -12,6 +12,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// General request logger - MUST be before any specific routes
+app.use((req, res, next) => {
+  console.log(`Incoming request: ${req.method} ${req.url}`);
+  next();
+});
+
 const {
   DB_HOST = 'mongodb',
   DB_PORT = '27017',
@@ -37,10 +43,12 @@ mongoose.connect(uri, {
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const postRoutes = require('./routes/posts');
+const commentRoutes = require('./routes/comments');
 
 app.use('/api', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/posts', express.json(), postRoutes);
+app.use('/api', commentRoutes);
 
 // Servir frontend
 app.use(express.static(path.join(__dirname, 'web')));

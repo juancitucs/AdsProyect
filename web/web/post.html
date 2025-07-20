@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkCodile | Post</title>
+    <link rel="stylesheet" href="perfil.css"> <!-- Reusing perfil.css for general styling -->
+    <style>
+        /* Specific styles for post.html */
+        body {
+            overflow-y: auto; /* Allow scrolling */
+            height: auto; /* Allow height to adjust to content */
+        }
+        .post-detail-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: var(--gap);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .post-detail-header {
+            margin-bottom: var(--gap);
+        }
+        .post-detail-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        .post-detail-header .post-meta {
+            font-size: 0.85rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .post-detail-content {
+            margin-top: var(--gap);
+            line-height: 1.6;
+        }
+        .post-detail-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--radius);
+            margin-top: 10px;
+        }
+        .post-author-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            display: block;
+            aspect-ratio: 1 / 1;
+        }
+        .post-author-link {
+            font-weight: 600;
+            color: var(--text);
+            text-decoration: none;
+        }
+        .post-author-link:hover {
+            text-decoration: underline;
+        }
+        .post-rating-display {
+            margin-top: 10px;
+        }
+        .rated-display {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .rated-icon {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+        .rated-average {
+            font-size: 1.1em;
+        }
+        .comments-section {
+            margin-top: calc(var(--gap) * 2);
+            border-top: 1px solid var(--border);
+            padding-top: var(--gap);
+        }
+        .comments-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: var(--gap);
+        }
+        .comment-form {
+            margin-bottom: var(--gap);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .comment-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            min-height: 80px;
+        }
+        .comment-form button[type="submit"] {
+            background: #26a65b !important; /* Primary green */
+            color: white !important;
+            border: 1px solid #26a65b !important;
+            padding: 8px 15px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .comment-form button[type="submit"]:hover {
+            background: #1e8449 !important; /* Darker green on hover */
+            border-color: #1e8449 !important;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .comment-actions button {
+            background: #26a65b !important; /* Primary green */
+            color: white !important;
+            border: 1px solid #26a65b !important;
+            padding: 6px 12px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .comment-actions button:hover {
+            background: #1e8449 !important;
+            border-color: #1e8449 !important;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .comment-form.reply-form button[type="submit"] {
+            background: #26a65b !important; /* Primary green */
+            color: white !important;
+            border: 1px solid #26a65b !important;
+            padding: 6px 12px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .comment-form.reply-form button.cancel-reply-btn {
+            background: #e6f9f1 !important; /* Very light green */
+            color: #1a1a1b !important; /* Dark text */
+            border: 1px solid #e6f9f1 !important;
+        }
+        .comment-form.reply-form button:hover {
+            background: #1e8449 !important;
+            border-color: #1e8449 !important;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .comment-form.reply-form button.cancel-reply-btn:hover {
+            background: #26a65b !important; /* Normal green on hover */
+            color: white !important; /* White text on hover */
+            border-color: #26a65b !important;
+        }
+        .replies {
+            margin-left: 20px;
+            border-left: 2px solid var(--border);
+            padding-left: 10px;
+            margin-top: 10px;
+        }
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+        .comment-author-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .comment-date {
+            font-size: 0.75rem;
+            color: #888;
+            margin-left: auto;
+        }
+    </style>
+    <script src="post.js" defer></script>
+</head>
+<body>
+    <div class="profile-page">
+        <div class="profile-main">
+            <header class="profile-header">
+                <button id="back-btn" class="back-btn">← Volver</button>
+                <h1 id="page-title" class="profile-title">Detalle del Post</h1>
+            </header>
+
+            <div class="post-detail-container">
+                <div class="post-detail-header">
+                    <h1 id="post-title"></h1>
+                    <div class="post-meta" id="post-meta"></div>
+                </div>
+                <div class="post-detail-content" id="post-content"></div>
+                <div id="post-rating-display"></div>
+            </div>
+
+            <section class="comments-section">
+                <h2>Comentarios</h2>
+                <form id="comment-form" class="comment-form">
+                    <textarea id="comment-content-input" placeholder="Escribe un comentario..." required></textarea>
+                    <button type="submit">Publicar Comentario</button>
+                </form>
+                <ul id="comments-list" class="comment-list"></ul>
+            </section>
+        </div>
+        <aside class="profile-aside">
+            <!-- Achievements or other sidebar content can go here -->
+            <h2>Información Adicional</h2>
+            <p>Aquí puedes añadir más detalles o widgets relacionados con el post o el autor.</p>
+        </aside>
+    </div>
+</body>
+</html>

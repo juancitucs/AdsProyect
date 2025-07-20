@@ -235,12 +235,13 @@ body {
 }
 
 /* ---------- Coco-Chibi rating ---------- */
-.coco-rating {
+.coco-rating-container {
   display: flex;
+  align-items: center;
   gap: 4px;
-  cursor: pointer;
 }
-.coco-rating img {
+
+.coco-rating-icon {
   width: 24px;
   height: 24px;
   object-fit: contain;
@@ -249,19 +250,56 @@ body {
     transform 0.2s,
     filter 0.2s;
 }
-.coco-rating img.active {
+.coco-rating-icon.active {
   filter: grayscale(0%);
 }
-.coco-rating img:hover {
+.coco-rating-icon:hover {
   transform: scale(1.2);
   filter: grayscale(0%);
 }
-.coco-rating img:hover ~ img {
+.coco-rating-icon:hover ~ .coco-rating-icon {
   transform: none;
   filter: grayscale(100%);
 }
 
-/* ---------- Rightbar ---------- */
+.average-rating-display {
+  font-weight: 600;
+  color: var(--primary); /* Or any color you prefer for the average display */
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: var(--primary-light);
+}
+
+.rated-display {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.rated-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.rated-average {
+  font-size: 1.1em;
+}
+
+@keyframes tremble {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  50% { transform: translateX(2px); }
+  75% { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+
+.coco-rating-icon.error {
+  filter: grayscale(0%) sepia(100%) hue-rotate(0deg) saturate(300%) brightness(100%); /* Soft red */
+  animation: tremble 0.2s ease-in-out 3; /* Tremble 3 times */
+}
 .rightbar {
   grid-area: right;
   background: var(--card-bg);
