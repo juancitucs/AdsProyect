@@ -38,6 +38,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const profileForm = document.getElementById('profile-form');
   const postsList = document.getElementById('posts-list');
   const commentsList = document.getElementById('comments-list');
+  const coursesGrid = document.getElementById('courses-grid');
+
+  let courses = []; // Global variable to store all courses
 
   /* ---------------- Estado -------------------- */
   let currentUser = null;   // usuario logeado
@@ -122,10 +125,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Populate the edit modal with post data
   const populateEditModal = (post) => {
-    // Assuming COURSES is available globally or fetched
-    const COURSES = ['Algoritmos', 'Física I', 'BD Avanzadas', 'POO']; // This should be dynamic or imported
     editPostCourseSelect.innerHTML = '';
-    COURSES.forEach(c => editPostCourseSelect.add(new Option(c, c)));
+    // Courses will be populated dynamically from the global `courses` array
+    courses.forEach(c => editPostCourseSelect.add(new Option(c.nombre, c.nombre)));
 
     editPostCourseSelect.value = post.course || '';
     editPostTitleInput.value = post.title || '';
@@ -154,6 +156,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   };
 
+  const renderCourses = (allCourses, userFavorites) => {
+    coursesGrid.innerHTML = ''; // Clear previous content
+    if (allCourses.length === 0) {
+      coursesGrid.innerHTML = '<p>No hay cursos disponibles.</p>';
+      return;
+    }
+
+    allCourses.forEach(course => {
+      const isFavorite = userFavorites.includes(course.nombre); // Check by course name
+      const heartIcon = isFavorite ? '❤️' : '🤍'; // Filled or empty heart
+
+      const courseCard = document.createElement('div');
+      courseCard.className = 'course-card';
+      courseCard.dataset.courseName = course.nombre; // Store course name for toggling
+
+      courseCard.innerHTML = `
+        <h3>${course.nombre}</h3>
+        <p>${course.descripcion}</p>
+        <span class="favorite-icon">${heartIcon}</span>
+      `;
+
+      const favoriteIconSpan = courseCard.querySelector('.favorite-icon');
+      favoriteIconSpan.addEventListener('click', async () => {
+        await toggleFavorite(course.nombre, isFavorite);
+      });
+
+      coursesGrid.appendChild(courseCard);
+    });
+  };
+
   /* ---------------- Cargar datos -------------- */
   async function loadData() {
     try {
@@ -170,6 +202,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       isOwnProfile = true; // Siempre es el propio perfil
       populateProfile(profileUser);
       setEditMode(false); // Inicia en modo visualización, pero editable
+
+      // Load all courses
+      courses = await apiFetch('/api/courses');
+
+      // Render favorite courses grid
+      renderCourses(courses, profileUser.favoritos || []);
 
       // 4. cargar posts inicialmente
       await fetchUserPosts();
@@ -207,6 +245,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (err) { console.error(err); }
   }
 
+  /* ---------------- Favorites ----------------- */
+  async function toggleFavorite(courseName, isCurrentlyFavorite) {
+    const action = isCurrentlyFavorite ? 'remove' : 'add';
+    try {
+      const updatedUser = await apiFetch('/api/users/favorites', {
+        method: 'PATCH',
+        body: JSON.stringify({ course: courseName, action: action })
+      });
+      // Update profileUser's favorites locally
+      profileUser.favoritos = updatedUser.favoritos;
+      // Re-render courses to reflect the change
+      renderCourses(courses, profileUser.favoritos);
+    } catch (err) {
+      console.error('Error toggling favorite:', err);
+      alert(`Error al actualizar favoritos: ${err.message}`);
+    }
+  }
+
   /* ---------------- Eventos ------------------- */
   // Navegación entre tabs
   tabs.forEach(btn => btn.addEventListener('click', () => {
@@ -220,6 +276,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       fetchUserPosts();
     } else if (btn.dataset.tab === 'comments') {
       fetchUserComments();
+    } else if (btn.dataset.tab === 'favorites') {
+      renderCourses(courses, profileUser.favoritos || []); // Re-render favorites tab
     }
   }));
 

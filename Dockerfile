@@ -1,10 +1,9 @@
-
 # Usa Node.js oficial
 FROM node:18-slim
 
 WORKDIR /app
 
-# 1) Copia los manifiestos y haz npm install solo de prod
+# 1) Copia los manifiestos y haz npm install
 COPY web/package.json web/package-lock.json ./
 RUN npm install
 
@@ -16,4 +15,3 @@ EXPOSE 80
 
 # 4) Arrancamos la app
 CMD ["node", "server.js"]
-

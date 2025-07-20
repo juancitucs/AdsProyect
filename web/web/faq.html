@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WorkCodile | FAQ Chat</title>
+    <link rel="stylesheet" href="dashboard.css" /> <!-- Keep dashboard.css for general layout -->
+    <link rel="stylesheet" href="faq.css" /> <!-- New CSS for chat specific styles -->
+    <script src="faq.js" defer></script> <!-- New JS for chat logic -->
+  </head>
+  <body>
+    <div class="container">
+      <!-- Topbar (from dashboard.html, keep for consistent navigation) -->
+      <header class="header">
+        <div class="header-left">
+          <img src="imagenes/workcodile-perfil2.png" alt="Logo" class="logo" />
+          <span class="brand">Work Codile</span>
+        </div>
+
+        <div class="header-center">
+          <input
+            type="search"
+            id="search-input"
+            placeholder="Buscar en Work Codile…"
+          />
+        </div>
+
+        <div class="header-right">
+          <button id="open-modal" class="btn-create">Crear</button>
+          <a href="me.html" title="Mi perfil">
+            <img
+              alt="Estudiante"
+              class="avatar"
+              id="user-avatar"
+            />
+          </a>
+        </div>
+      </header>
+
+      <!-- Sidebar (from dashboard.html, keep for consistent navigation) -->
+      <aside class="sidebar">
+        <nav>
+          <ul class="sidebar-menu">
+            <li id="menu-inicio" class="menu-item">
+              <img src="imagenes/Inicio.png" alt="Inicio" class="menu-icon" />
+              <span>Inicio</span>
+            </li>
+
+            <li class="menu-item">
+              <div id="menu-cursos" class="menu-cursos-header">
+                <img src="imagenes/cursos.png" alt="Cursos" class="menu-icon" />
+                <span>Cursos</span>
+                <span id="arrow-cursos" class="arrow">▼</span>
+              </div>
+              <ul id="lista-cursos" class="cursos-lista"></ul>
+            </li>
+
+            <li id="menu-soporte" class="menu-item">
+              <img src="imagenes/soporte.png" alt="Soporte" class="menu-icon" />
+              <span>Soporte</span>
+            </li>
+
+            <li id="menu-faq" class="menu-item active">
+              <img src="imagenes/faq.png" alt="FAQ" class="menu-icon" />
+              <span>FAQ</span>
+            </li>
+            <li id="menu-admin" class="menu-item admin-only" style="display: none;">
+              <div id="menu-admin-header" class="menu-admin-header">
+                <img src="imagenes/set.jpg" alt="Admin" class="menu-icon" />
+                <span>Administración</span>
+                <span id="arrow-admin" class="arrow">▼</span>
+              </div>
+              <ul id="lista-admin" class="admin-lista">
+                <li id="admin-manage-courses">Administrar Cursos</li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Main content for chat -->
+      <main class="chat-main">
+        <h2>Pregúntale a Gemini</h2>
+        <div id="chat-messages" class="chat-messages"></div>
+        <div class="chat-input-container">
+          <input type="text" id="chat-input" placeholder="Escribe tu pregunta..." />
+          <button id="send-button">Enviar</button>
+        </div>
+      </main>
+
+      <!-- Rightbar (from dashboard.html, keep for consistent layout) -->
+      <aside class="rightbar">
+        <h4>Top usuarios</h4>
+        <table id="top-users-table" class="user-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Usuario</th>
+              <th>Calificación Promedio</th>
+            </tr>
+          </thead>
+          <tbody id="top-users-body"></tbody>
+        </table>
+      </aside>
+
+    </div>
+  </body>
+</html>

@@ -45,6 +45,7 @@ const userRoutes = require('./routes/users');
 const postRoutes = require('./routes/posts');
 const commentRoutes = require('./routes/comments');
 const courseRoutes = require('./routes/courses'); // Import courses route
+const geminiRoutes = require('./routes/gemini'); // Import gemini route
 const Post = require('./models/Post'); // Import Post model
 const Course = require('./models/Course'); // Import Course model
 
@@ -111,6 +112,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/posts', express.json(), postRoutes);
 app.use('/api', commentRoutes);
 app.use('/api/courses', courseRoutes); // Add courses route
+app.use('/api/gemini', geminiRoutes); // Add gemini route
 
 // Servir frontend
 app.use(express.static(path.join(__dirname, 'web')));

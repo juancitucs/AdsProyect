@@ -26,6 +26,7 @@ const imgPrev = document.getElementById('post-preview');
 const btnPublish = document.getElementById('btn-publish');
 const topUsersTableBody = document.getElementById('top-users-body');
 
+const menuInicio = document.getElementById('menu-inicio'); // Added DOM ref
 const menuCursos = document.getElementById('menu-cursos');
 const arrowCursos = document.getElementById('arrow-cursos');
 const listaCursos = document.getElementById('lista-cursos');
@@ -64,33 +65,62 @@ const apiFetch = async (url, options = {}) => {
 
 /* =====================  Inicialización  ====================== */
 document.addEventListener('DOMContentLoaded', async () => {
-  await loadCurrentUserAvatar(); // Load user role first
+  const loggedInUser = await loadCurrentUserAvatar(); // Load user role and get user object
   await loadCourses(); // Load courses
   
   /* selector en el modal */
   courses.forEach(c => courseSel.add(new Option(c.nombre, c.nombre)));
   
-  // Set initial currentCourse and populate postsByCourse
-  if (courses.length > 0) {
-    currentCourse = courses[0].nombre;
-    courseSel.value = currentCourse;
-    courses.forEach(c => postsByCourse[c.nombre] = []);
-  }
+  // Initialize postsByCourse for all courses
+  courses.forEach(c => postsByCourse[c.nombre] = []);
 
   populateCursosSidebar();
   attachSidebarHandlers();
 
-  if (currentCourse) {
-    await loadPosts(currentCourse);
-    renderFeed(postsByCourse[currentCourse]);
-  } else {
-    feed.innerHTML = '<p style="color:#777;text-align:center;">No hay cursos disponibles.</p>';
-  }
+  await loadAndRenderInitialFeed(loggedInUser); // Load and render initial feed based on favorites
   
+  // Set initial active state for sidebar
+  if (menuInicio) menuInicio.classList.add('active');
+  if (menuCursos) menuCursos.classList.remove('active');
+
   await loadTopUsers(); // Call the new function to load top users
   setupModalHandlers();
   setupSearch();
 });
+
+async function loadAndRenderInitialFeed(user) {
+  let coursesToLoad = [];
+
+  if (user && user.favoritos && user.favoritos.length > 0) {
+    coursesToLoad = user.favoritos;
+    console.log('Loading posts from favorite courses:', coursesToLoad);
+  } else if (courses.length > 0) {
+    coursesToLoad = [courses[0].nombre]; // Fallback to the first course if no favorites
+    console.log('No favorite courses, loading posts from default course:', coursesToLoad[0]);
+  } else {
+    feed.innerHTML = '<p style="color:#777;text-align:center;">No hay cursos disponibles.</p>';
+    return;
+  }
+
+  // Load posts for all selected courses
+  await Promise.all(coursesToLoad.map(courseName => loadPosts(courseName)));
+
+  // Combine posts from all loaded courses and sort by time
+  let initialPosts = [];
+  coursesToLoad.forEach(courseName => {
+    initialPosts = initialPosts.concat(postsByCourse[courseName] || []);
+  });
+  initialPosts.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+  // Set currentCourse to the first favorite or default course for sidebar highlighting
+  if (coursesToLoad.length > 0) {
+    currentCourse = coursesToLoad[0];
+    // Update sidebar active class for the initial course
+    // This is handled by the initial active state of menuInicio, so no change here
+  }
+
+  renderFeed(initialPosts);
+}
 
 async function loadCurrentUserAvatar() {
   try {
@@ -110,11 +140,13 @@ async function loadCurrentUserAvatar() {
       currentUserRole = user.tipo;
       menuAdmin.style.display = 'block'; // Show the admin menu
     }
+    return user; // Return the user object
 
   } catch (error) {
     console.error('Error loading current user avatar:', error);
     const userAvatar = document.getElementById('user-avatar');
     userAvatar.src = 'imagenes/usuario.png'; // Fallback to default
+    return null; // Return null on error
   }
 }
 
@@ -142,6 +174,21 @@ function populateCursosSidebar() {
 
 /* ---------- abrir/cerrar lista + click en curso -- */
 function attachSidebarHandlers() {
+  // Handle click on 'Inicio'
+  if (menuInicio) {
+    menuInicio.addEventListener('click', async () => {
+      // Deactivate other menu items
+      if (menuCursos) menuCursos.classList.remove('active');
+      [...listaCursos.children].forEach(li => li.classList.remove('active'));
+      // Activate 'Inicio'
+      menuInicio.classList.add('active');
+      // Re-render initial feed
+      const loggedInUser = await loadCurrentUserAvatar(); // Re-fetch user to ensure latest favorites
+      await loadAndRenderInitialFeed(loggedInUser);
+    });
+  }
+
+  // Handle click on 'Cursos' header
   menuCursos.addEventListener('click', () => {
     const isOpen = listaCursos.style.maxHeight;
     if (isOpen) {
@@ -149,14 +196,22 @@ function attachSidebarHandlers() {
     } else {
       openCursos();
     }
+    // When Cursos header is clicked, activate it and deactivate Inicio
+    if (menuCursos) menuCursos.classList.add('active');
+    if (menuInicio) menuInicio.classList.remove('active');
   });
 
+  // Handle click on individual course in 'Cursos' list
   listaCursos.addEventListener('click', async e => {
     if (e.target.tagName !== 'LI') return;
     const curso = e.target.dataset.curso;
     if (curso === currentCourse) return;
 
     currentCourse = curso;
+
+    // Deactivate 'Inicio' and activate 'Cursos' header
+    if (menuInicio) menuInicio.classList.remove('active');
+    if (menuCursos) menuCursos.classList.add('active');
 
     [...listaCursos.children].forEach(li => li.classList.toggle('active', li.dataset.curso === curso));
 

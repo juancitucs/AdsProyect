@@ -1,0 +1,82 @@
+
+.chat-main {
+  grid-area: feed; /* Use the same grid area as feed in dashboard.css */
+  display: flex;
+  flex-direction: column;
+  padding: var(--gap);
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden; /* Ensure messages don't overflow */
+}
+
+.chat-main h2 {
+  margin-bottom: var(--gap);
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.chat-messages {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: var(--gap);
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-message {
+  margin-bottom: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  max-width: 80%;
+}
+
+.chat-message.user {
+  align-self: flex-end;
+  background-color: var(--accent); /* Green for user messages */
+  color: #000; /* Black text for user messages */
+}
+
+.chat-message.gemini {
+  align-self: flex-start;
+  background-color: var(--primary); /* Darker green for Gemini messages */
+  color: #fff; /* White text for Gemini messages */
+}
+
+.chat-message p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.chat-input-container {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chat-input-container input {
+  flex-grow: 1;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 1rem;
+}
+
+.chat-input-container button {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.chat-input-container button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
