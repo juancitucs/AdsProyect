@@ -37,18 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const cancelBtn = document.getElementById('cancel-btn');
   const profileForm = document.getElementById('profile-form');
   const postsList = document.getElementById('posts-list');
-
-  // Edit Post Modal DOM elements
-  const editPostModal = document.getElementById('edit-post-modal');
-  const editModalCloseBtn = document.getElementById('edit-modal-close');
-  const editPostForm = document.getElementById('edit-post-form');
-  const editPostCourseSelect = document.getElementById('edit-post-course');
-  const editPostTitleInput = document.getElementById('edit-post-title');
-  const editPostBodyTextarea = document.getElementById('edit-post-body');
-  const editPostImageInput = document.getElementById('edit-post-image');
-  const editPostImagePreview = document.getElementById('edit-post-preview');
-  const btnUpdatePost = document.getElementById('btn-update-post');
-  const btnCancelEdit = document.getElementById('btn-cancel-edit');
+  const commentsList = document.getElementById('comments-list');
 
   /* ---------------- Estado -------------------- */
   let currentUser = null;   // usuario logeado
@@ -147,11 +136,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     editPostForm.dataset.postId = post._id; // Store post ID in form dataset
   };
 
+  const renderComments = (comments) => {
+    commentsList.innerHTML = comments.length
+      ? comments.map(c =>
+        `<li data-comment-id="${c._id}">
+           <p>${c.content}</p>
+           <small>En post: <a href="post.html?id=${c.postId._id}">${c.postId.title}</a></small>
+         </li>`
+      ).join('')
+      : '<li>No hay comentarios.</li>';
+
+    // Add event listener for comment clicks (optional, if you want to highlight or do something else)
+    commentsList.querySelectorAll('li').forEach(li => {
+      li.addEventListener('click', (e) => {
+        // Example: console.log('Comment clicked:', e.currentTarget.dataset.commentId);
+      });
+    });
+  };
+
   /* ---------------- Cargar datos -------------- */
   async function loadData() {
     try {
       // Siempre carga el perfil del usuario logeado
-      profileUser = await apiFetch('/api/me');
+      profileUser = await apiFetch('/api/users/me');
       console.log('Profile User Data:', profileUser);
 
       // Explicitly check if profileUser is valid
@@ -187,6 +194,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (err) { console.error(err); }
   }
 
+  /* ---------------- Comments ------------------ */
+  async function fetchUserComments() {
+    if (!profileUser || !profileUser._id) {
+      console.error('Error: profileUser no está definido o no tiene _id. No se pueden cargar los comentarios.');
+      commentsList.innerHTML = '<li>No se pudo cargar los comentarios del usuario.</li>';
+      return;
+    }
+    try {
+      const comments = await apiFetch(`/api/user/${profileUser._id}`);
+      renderComments(comments);
+    } catch (err) { console.error(err); }
+  }
+
   /* ---------------- Eventos ------------------- */
   // Navegación entre tabs
   tabs.forEach(btn => btn.addEventListener('click', () => {
@@ -198,6 +218,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (btn.dataset.tab === 'posts') {
       fetchUserPosts();
+    } else if (btn.dataset.tab === 'comments') {
+      fetchUserComments();
     }
   }));
 
@@ -206,44 +228,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const backBtn = document.getElementById('back-btn');
   if (backBtn) backBtn.onclick = () => history.back();
 
-  // Edit Post Modal Handlers
-  editModalCloseBtn.addEventListener('click', () => {
-    editPostModal.classList.remove('show');
-  });
-
-  btnCancelEdit.addEventListener('click', () => {
-    editPostModal.classList.remove('show');
-  });
-
-  editPostImageInput.addEventListener('input', () => {
-    const url = editPostImageInput.value.trim();
-    if (/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i.test(url)) {
-      editPostImagePreview.src = url;
-      editPostImagePreview.style.display = 'block';
-    } else {
-      editPostImagePreview.style.display = 'none';
-    }
-  });
-
-  editPostForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const postId = editPostForm.dataset.postId;
-    const updatedData = {
-      course: editPostCourseSelect.value,
-      title: editPostTitleInput.value.trim(),
-      content: editPostBodyTextarea.value.trim(),
-      image: editPostImageInput.value.trim()
-    };
-
-    try {
-      await apiFetch(`/api/posts/${postId}`, { method: 'PATCH', body: JSON.stringify(updatedData) });
-      alert('Publicación actualizada exitosamente.');
-      editPostModal.classList.remove('show');
-      fetchUserPosts(); // Re-fetch posts to update the list
-    } catch (err) {
-      alert(`Error al actualizar la publicación: ${err.message}`);
-    }
-  });
+  
 
   // Editar / cancelar
   editBtn.onclick = () => setEditMode(true);

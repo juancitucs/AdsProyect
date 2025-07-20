@@ -11,7 +11,7 @@ const authenticateToken = (req, res, next) => {
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) return res.status(403).json({ error: 'Invalid token' });
     console.log('Decoded JWT user payload:', user);
-    req.user = user; // Attach user payload (e.g., { id: user._id })
+    req.user = { id: user._id || user.id }; // Ensure req.user.id is set correctly
     next();
   });
 };

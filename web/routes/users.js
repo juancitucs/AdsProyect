@@ -44,6 +44,21 @@ router.patch('/me', authenticateToken, async (req, res) => {
 
 
 
+// --- Authenticated Routes ---
+
+// Get current logged-in user's profile
+router.get('/me', authenticateToken, async (req, res) => {
+  console.log('SERVER: /api/users/me route handler hit!');
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+    res.json(user);
+  } catch (err) {
+    console.error('Error fetching current user:', err);
+    res.status(500).json({ error: 'Error al obtener el perfil del usuario actual' });
+  }
+});
+
 router.get('/:id', authenticateToken, async (req, res) => {
   const isOwn = req.user && req.user.id === req.params.id;
   const projection = isOwn
@@ -67,21 +82,6 @@ router.get('/:id/posts', async (req, res) => {
   } catch (err) {
     console.error('Error fetching user posts:', err);
     res.status(500).json({ error: 'Error fetching user posts' });
-  }
-});
-
-
-// --- Authenticated Routes ---
-
-// Get current logged-in user's profile
-router.get('/me', authenticateToken, async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id).select('-password');
-    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
-    res.json(user);
-  } catch (err) {
-    console.error('Error fetching current user:', err);
-    res.status(500).json({ error: 'Error al obtener el perfil del usuario actual' });
   }
 });
 

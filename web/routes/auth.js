@@ -47,14 +47,17 @@ const authenticateToken = require('../middleware/auth');
 
 router.get('/me', authenticateToken, async (req, res) => {
   try {
-    console.log('req.user.id:', req.user.id);
+    console.log('Auth /api/me: req.user.id is', req.user.id);
     const user = await User.findById(req.user.id).select('nombre email tipo perfil');
-    console.log('User found:', user);
-    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+    console.log('Auth /api/me: User found:', user);
+    if (!user) {
+      console.warn('Auth /api/me: User not found for ID:', req.user.id, '. Sending 404.');
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
     res.json(user);
   } catch (err) {
     console.error('Error in /api/me:', err);
-    res.status(500).json({ error: 'Error al buscar usuario' });
+    res.status(500).json({ error: 'Error interno al buscar usuario' });
   }
 });
 

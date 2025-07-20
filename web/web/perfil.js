@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const emailInp = document.getElementById('email');
   const bioInp = document.getElementById('bio');
   const postsList = document.getElementById('posts-list');
+  const commentsList = document.getElementById('comments-list');
 
   /* ---------------- Estado -------------------- */
   let profileUser = null;   // usuario mostrado
@@ -50,6 +51,24 @@ document.addEventListener('DOMContentLoaded', async () => {
       span.addEventListener('click', (e) => {
         const postId = e.target.closest('li').dataset.postId;
         window.location.href = `post.html?id=${postId}`;
+      });
+    });
+  };
+
+  const renderComments = (comments) => {
+    commentsList.innerHTML = comments.length
+      ? comments.map(c =>
+        `<li data-comment-id="${c._id}">
+           <p>${c.content}</p>
+           <small>En post: <a href="post.html?id=${c.postId._id}">${c.postId.title}</a></small>
+         </li>`
+      ).join('')
+      : '<li>No hay comentarios.</li>';
+
+    // Add event listener for comment clicks (optional, if you want to highlight or do something else)
+    commentsList.querySelectorAll('li').forEach(li => {
+      li.addEventListener('click', (e) => {
+        // Example: console.log('Comment clicked:', e.currentTarget.dataset.commentId);
       });
     });
   };
@@ -91,6 +110,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (err) { console.error(err); }
   }
 
+  /* ---------------- Comments ------------------ */
+  async function fetchUserComments() {
+    try {
+      const comments = await apiFetch(`/api/user/${profileUser._id}`);
+      renderComments(comments);
+    } catch (err) { console.error(err); }
+  }
+
   /* ---------------- Eventos ------------------- */
   // Navegación entre tabs
   tabs.forEach(btn => btn.addEventListener('click', () => {
@@ -101,6 +128,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
 
     if (btn.dataset.tab === 'posts') fetchUserPosts();
+    if (btn.dataset.tab === 'comments') fetchUserComments();
   }));
 
   document.getElementById('back-btn').onclick = () => history.back();

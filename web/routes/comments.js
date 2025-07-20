@@ -3,6 +3,7 @@ const router = express.Router();
 const Comment = require('../models/Comment');
 const User = require('../models/User');
 const authenticateToken = require('../middleware/auth');
+const Post = require('../models/Post'); // Import Post model
 
 // Helper function to build comment tree
 const buildCommentTree = (comments, parentId = null) => {
@@ -48,6 +49,24 @@ router.get('/posts/:postId/comments', async (req, res) => {
   } catch (error) {
     console.error('Error fetching comments:', error);
     res.status(500).json({ error: 'Error al obtener comentarios' });
+  }
+});
+
+// GET all comments by a specific user
+router.get('/user/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const comments = await Comment.find({ author: userId })
+      .populate('postId', 'title') // Populate post title
+      .lean();
+
+    // Filter out comments where postId population failed (e.g., post deleted)
+    const validComments = comments.filter(comment => comment.postId !== null);
+
+    res.json(validComments);
+  } catch (error) {
+    console.error('Error fetching user comments:', error);
+    res.status(500).json({ error: 'Error al obtener comentarios del usuario' });
   }
 });
 

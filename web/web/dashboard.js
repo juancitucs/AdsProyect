@@ -36,6 +36,22 @@ const menuCursos = document.getElementById('menu-cursos');
 const arrowCursos = document.getElementById('arrow-cursos');
 const listaCursos = document.getElementById('lista-cursos');
 
+/* =====================  Utilidades  ========================== */
+const getToken = () => localStorage.getItem('jwtToken');
+
+const apiFetch = async (url, options = {}) => {
+  const headers = { 'Content-Type': 'application/json', ...options.headers };
+  const tkn = getToken();
+  if (tkn) headers.Authorization = `Bearer ${tkn}`;
+  const res = await fetch(url, { ...options, headers });
+  if (!res.ok) {
+      const errorBody = await res.json();
+      console.error('API Fetch Error:', res.status, errorBody);
+      throw new Error(errorBody.error || res.statusText);
+  }
+  return res.json();
+};
+
 /* =====================  Inicialización  ====================== */
 document.addEventListener('DOMContentLoaded', async () => {
   /* selector en el modal */
@@ -50,7 +66,27 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderTopUsers();
   setupModalHandlers();
   setupSearch();
+  loadCurrentUserAvatar();
 });
+
+async function loadCurrentUserAvatar() {
+  try {
+    const user = await apiFetch('/api/users/me');
+    const userAvatar = document.getElementById('user-avatar');
+    if (user && user.perfil && user.perfil.foto) {
+        userAvatar.src = user.perfil.foto;
+        console.log('Avatar src set to:', userAvatar.src);
+      } else {
+        console.log('User or user.perfil.foto is missing. Using default avatar.');
+        userAvatar.src = 'imagenes/usuario.png'; // Default avatar
+        console.log('Avatar src set to default:', userAvatar.src);
+      }
+  } catch (error) {
+    console.error('Error loading current user avatar:', error);
+    const userAvatar = document.getElementById('user-avatar');
+    userAvatar.src = 'imagenes/usuario.png'; // Fallback to default
+  }
+}
 
 /* ---------- llenar lista colapsable ------------- */
 function populateCursosSidebar() {
