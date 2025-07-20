@@ -44,11 +44,73 @@ const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const postRoutes = require('./routes/posts');
 const commentRoutes = require('./routes/comments');
+const courseRoutes = require('./routes/courses'); // Import courses route
+const Post = require('./models/Post'); // Import Post model
+const Course = require('./models/Course'); // Import Course model
 
 app.use('/api', authRoutes);
+
+// New: Get top users by average post rating - moved here to ensure it's processed before dynamic user routes
+app.get('/api/users/top', async (req, res) => {
+  try {
+    const topUsers = await Post.aggregate([
+      {
+        $match: {
+          averageRating: { $exists: true, $ne: null } // Only consider posts with an average rating
+        }
+      },
+      {
+        $group: {
+          _id: '$autor', // Group by user ID
+          totalRatingSum: { $sum: '$averageRating' },
+          postCount: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          _id: 0, // Exclude _id from this stage
+          userId: '$_id',
+          overallAverageRating: { $divide: ['$totalRatingSum', '$postCount'] }
+        }
+      },
+      {
+        $sort: { overallAverageRating: -1 } // Sort by overall average rating descending
+      },
+      {
+        $limit: 10 // Get top 10 users
+      },
+      {
+        $lookup: {
+          from: 'users', // The collection to join with (MongoDB automatically pluralizes model names)
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'userDetails'
+        }
+      },
+      {
+        $unwind: '$userDetails' // Deconstruct the userDetails array
+      },
+      {
+        $project: {
+          userId: '$userDetails._id',
+          nombre: '$userDetails.nombre',
+          email: '$userDetails.email', // Include email if needed, but be mindful of privacy
+          foto: '$userDetails.perfil.foto',
+          overallAverageRating: { $round: ['$overallAverageRating', 2] } // Round to 2 decimal places
+        }
+      }
+    ]);
+    res.json(topUsers);
+  } catch (err) {
+    console.error('Error fetching top users:', err);
+    res.status(500).json({ error: 'Error al obtener los usuarios principales' });
+  }
+});
+
 app.use('/api/users', userRoutes);
 app.use('/api/posts', express.json(), postRoutes);
 app.use('/api', commentRoutes);
+app.use('/api/courses', courseRoutes); // Add courses route
 
 // Servir frontend
 app.use(express.static(path.join(__dirname, 'web')));

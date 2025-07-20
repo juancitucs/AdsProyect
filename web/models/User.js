@@ -12,7 +12,8 @@ const UserSchema = new mongoose.Schema({
     bio: String,
     foto: String,
     intereses: [String]
-  }
+  },
+  favoritos: { type: [String], default: [] }
 });
 
 module.exports = mongoose.model('User', UserSchema);

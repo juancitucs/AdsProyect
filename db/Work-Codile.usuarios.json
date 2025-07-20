@@ -62,5 +62,17 @@
       "foto": "usuario.png",
       "intereses": []
     }
+  },
+  {
+    "_id": "999999",
+    "nombre": "Super Admin",
+    "email": "admin@admin.com",
+    "contrasena": "999999",
+    "tipo": "admin",
+    "perfil": {
+      "bio": "Administrador del sistema.",
+      "foto": "usuario.png",
+      "intereses": []
+    }
   }
 ]

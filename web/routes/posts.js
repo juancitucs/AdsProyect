@@ -9,7 +9,7 @@ const authenticateToken = require('../middleware/auth'); // Import the middlewar
 /* ---------- GET /api/posts/:id ---------- */
 router.get('/:id', async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id).lean();
+    const post = await Post.findById(req.params.id).populate('autor').lean();
     if (!post) {
       return res.status(404).json({ error: 'Post no encontrado' });
     }
@@ -176,8 +176,11 @@ router.delete('/:id', authenticateToken, async (req, res) => {
       return res.status(404).json({ error: 'Post no encontrado' });
     }
 
-    // Verificar que el usuario autenticado es el autor del post
-    if (post.autor.toString() !== req.user.id) {
+    // Verificar si el usuario autenticado es el autor del post o un administrador/moderador
+    const isAdminOrModerator = req.user.tipo === 'admin' || req.user.tipo === 'moderator';
+    const isAuthor = post.autor.toString() === req.user.id;
+
+    if (!isAdminOrModerator && !isAuthor) {
       return res.status(403).json({ error: 'No autorizado para eliminar este post' });
     }
 

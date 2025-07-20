@@ -1,20 +1,14 @@
 
 /* =====================  Datos iniciales  ===================== */
-const COURSES = ['Algoritmos', 'Física I', 'BD Avanzadas', 'POO'];
+let courses = []; // Will be populated from API
 const COCO_ICON = 'imagenes/coco-chibi.png';
 
 /* posts por curso; se irán llenando desde la API */
-const postsByCourse = Object.fromEntries(COURSES.map(c => [c, []]));
-let currentCourse = COURSES[0];
+const postsByCourse = {}; // Will be populated dynamically based on fetched courses
+let currentCourse = null; // Will be set after courses are loaded
 
-/* =====================  Top usuarios (mock)  ================= */
-const topUsers = [
-  { name: 'Ana Torres', avatar: 'imagenes/usuario.png', points: 1520 },
-  { name: 'Carlos Pérez', avatar: 'imagenes/usuario.png', points: 1390 },
-  { name: 'María López', avatar: 'imagenes/usuario.png', points: 1275 },
-  { name: 'Luis Gómez', avatar: 'imagenes/usuario.png', points: 1180 },
-  { name: 'Sofía Díaz', avatar: 'imagenes/usuario.png', points: 1105 }
-];
+/* =====================  Top usuarios  ================= */
+// No longer a mock, data will be fetched from API
 
 /* =====================  DOM refs  ============================ */
 const feed = document.getElementById('feed');
@@ -30,11 +24,27 @@ const bodyInp = document.getElementById('post-body');
 const imgInp = document.getElementById('post-image');
 const imgPrev = document.getElementById('post-preview');
 const btnPublish = document.getElementById('btn-publish');
-const topUsersUL = document.getElementById('top-users');
+const topUsersTableBody = document.getElementById('top-users-body');
 
 const menuCursos = document.getElementById('menu-cursos');
 const arrowCursos = document.getElementById('arrow-cursos');
 const listaCursos = document.getElementById('lista-cursos');
+
+// Admin elements
+const menuAdmin = document.getElementById('menu-admin');
+const menuAdminHeader = document.getElementById('menu-admin-header');
+const arrowAdmin = document.getElementById('arrow-admin');
+const listaAdmin = document.getElementById('lista-admin');
+const adminCourseModal = document.getElementById('admin-course-modal');
+const adminCourseModalClose = document.getElementById('admin-course-modal-close');
+const addCourseForm = document.getElementById('add-course-form');
+const addCourseId = document.getElementById('add-course-id');
+const addCourseName = document.getElementById('add-course-name');
+const addCourseDescription = document.getElementById('add-course-description');
+const deleteCourseForm = document.getElementById('delete-course-form');
+const deleteCourseSelect = document.getElementById('delete-course-select');
+
+let currentUserRole = null; // To store the role of the logged-in user
 
 /* =====================  Utilidades  ========================== */
 const getToken = () => localStorage.getItem('jwtToken');
@@ -54,19 +64,32 @@ const apiFetch = async (url, options = {}) => {
 
 /* =====================  Inicialización  ====================== */
 document.addEventListener('DOMContentLoaded', async () => {
+  await loadCurrentUserAvatar(); // Load user role first
+  await loadCourses(); // Load courses
+  
   /* selector en el modal */
-  COURSES.forEach(c => courseSel.add(new Option(c, c)));
-  courseSel.value = currentCourse;
+  courses.forEach(c => courseSel.add(new Option(c.nombre, c.nombre)));
+  
+  // Set initial currentCourse and populate postsByCourse
+  if (courses.length > 0) {
+    currentCourse = courses[0].nombre;
+    courseSel.value = currentCourse;
+    courses.forEach(c => postsByCourse[c.nombre] = []);
+  }
 
   populateCursosSidebar();
   attachSidebarHandlers();
 
-  await loadPosts(currentCourse);
-  renderFeed(postsByCourse[currentCourse]);
-  renderTopUsers();
+  if (currentCourse) {
+    await loadPosts(currentCourse);
+    renderFeed(postsByCourse[currentCourse]);
+  } else {
+    feed.innerHTML = '<p style="color:#777;text-align:center;">No hay cursos disponibles.</p>';
+  }
+  
+  await loadTopUsers(); // Call the new function to load top users
   setupModalHandlers();
   setupSearch();
-  loadCurrentUserAvatar();
 });
 
 async function loadCurrentUserAvatar() {
@@ -81,6 +104,13 @@ async function loadCurrentUserAvatar() {
         userAvatar.src = 'imagenes/usuario.png'; // Default avatar
         console.log('Avatar src set to default:', userAvatar.src);
       }
+    
+    // Store user role and conditionally display admin menu
+    if (user && (user.tipo === 'admin' || user.tipo === 'moderator')) {
+      currentUserRole = user.tipo;
+      menuAdmin.style.display = 'block'; // Show the admin menu
+    }
+
   } catch (error) {
     console.error('Error loading current user avatar:', error);
     const userAvatar = document.getElementById('user-avatar');
@@ -88,13 +118,24 @@ async function loadCurrentUserAvatar() {
   }
 }
 
+async function loadCourses() {
+  try {
+    courses = await apiFetch('/api/courses');
+    console.log('Loaded courses:', courses);
+  } catch (error) {
+    console.error('Error loading courses:', error);
+    courses = []; // Fallback to empty array
+  }
+}
+
 /* ---------- llenar lista colapsable ------------- */
 function populateCursosSidebar() {
-  COURSES.forEach(curso => {
+  listaCursos.innerHTML = ''; // Clear existing list items
+  courses.forEach(curso => {
     const li = document.createElement('li');
-    li.textContent = curso;
-    li.dataset.curso = curso;
-    if (curso === currentCourse) li.classList.add('active');
+    li.textContent = curso.nombre;
+    li.dataset.curso = curso.nombre;
+    if (curso.nombre === currentCourse) li.classList.add('active');
     listaCursos.appendChild(li);
   });
 }
@@ -122,6 +163,96 @@ function attachSidebarHandlers() {
     if (postsByCourse[curso].length === 0) await loadPosts(curso);
     renderFeed(postsByCourse[curso]);
   });
+
+  // Admin menu handlers
+  menuAdminHeader.addEventListener('click', () => {
+    const isOpen = listaAdmin.style.maxHeight;
+    if (isOpen) {
+      listaAdmin.style.maxHeight = '';
+      arrowAdmin.style.transform = '';
+    } else {
+      listaAdmin.style.maxHeight = listaAdmin.scrollHeight + 'px';
+      arrowAdmin.style.transform = 'rotate(180deg)';
+    }
+  });
+
+  document.getElementById('admin-manage-courses').addEventListener('click', () => {
+    adminCourseModal.classList.add('show');
+    populateDeleteCourseSelect();
+  });
+
+  adminCourseModalClose.addEventListener('click', () => {
+    adminCourseModal.classList.remove('show');
+  });
+
+  addCourseForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const newCourse = {
+      _id: addCourseId.value.trim(),
+      nombre: addCourseName.value.trim(),
+      descripcion: addCourseDescription.value.trim()
+    };
+
+    try {
+      await apiFetch('/api/courses', { method: 'POST', body: JSON.stringify(newCourse) });
+      alert('Curso agregado exitosamente!');
+      addCourseForm.reset();
+      await loadCourses(); // Reload courses to update sidebar and dropdowns
+      populateCursosSidebar();
+      populateDeleteCourseSelect();
+      // Re-render feed if current course is affected or if we want to show new course posts
+      if (currentCourse) {
+        await loadPosts(currentCourse);
+        renderFeed(postsByCourse[currentCourse]);
+      }
+    } catch (error) {
+      console.error('Error adding course:', error);
+      alert(`Error al agregar curso: ${error.message}`);
+    }
+  });
+
+  deleteCourseForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const courseIdToDelete = deleteCourseSelect.value;
+    if (!courseIdToDelete) return;
+
+    if (confirm('¿Estás seguro de que quieres eliminar este curso? Esto eliminará todos los posts asociados.')) {
+      try {
+        await apiDelete(`/api/courses/${courseIdToDelete}`);
+        alert('Curso eliminado exitosamente!');
+        deleteCourseForm.reset();
+        await loadCourses(); // Reload courses to update sidebar and dropdowns
+        populateCursosSidebar();
+        populateDeleteCourseSelect();
+        // Potentially clear feed if the current course was deleted
+        if (currentCourse === courseIdToDelete) {
+          currentCourse = courses.length > 0 ? courses[0].nombre : null;
+          if (currentCourse) {
+            await loadPosts(currentCourse);
+            renderFeed(postsByCourse[currentCourse]);
+          } else {
+            feed.innerHTML = '<p style="color:#777;text-align:center;">No hay cursos disponibles.</p>';
+          }
+        }
+      } catch (error) {
+        console.error('Error deleting course:', error);
+        alert(`Error al eliminar curso: ${error.message}`);
+      }
+    }
+  });
+}
+
+function populateDeleteCourseSelect() {
+  deleteCourseSelect.innerHTML = '';
+  courses.forEach(course => {
+    const option = document.createElement('option');
+    option.value = course._id;
+    option.textContent = `${course.nombre} (${course._id})`;
+    deleteCourseSelect.appendChild(option);
+  });
+  if (courses.length > 0) {
+    deleteCourseSelect.value = courses[0]._id;
+  }
 }
 
 function openCursos() { listaCursos.style.maxHeight = listaCursos.scrollHeight + 'px'; arrowCursos.style.transform = 'rotate(180deg)'; }
@@ -176,6 +307,29 @@ async function apiPatch(id, patchBody) {
   console.log('apiPatch - Sending request:', url, options);
 
   return (await fetch(url, options)).json();
+}
+
+async function apiDelete(url) {
+  const token = localStorage.getItem('jwtToken');
+  if (!token) {
+    console.error('No JWT token found. User not authenticated for DELETE.');
+    return null;
+  }
+
+  const options = {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  };
+
+  const res = await fetch(url, options);
+  if (!res.ok) {
+    const errorBody = await res.json();
+    console.error('API Delete Error:', res.status, errorBody);
+    throw new Error(errorBody.error || res.statusText);
+  }
+  return res.json();
 }
 
 /* =====================  Modal & publicación  ================= */
@@ -262,6 +416,30 @@ function createCard(p) {
   body.appendChild(small);
 
   card.append(body);
+
+  // Add delete button for admin/moderator users
+  if (currentUserRole === 'admin' || currentUserRole === 'moderator') {
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn-delete-post';
+    deleteBtn.textContent = 'Eliminar Post';
+    deleteBtn.onclick = async (e) => {
+      e.stopPropagation(); // Prevent navigating to post.html
+      if (confirm('¿Estás seguro de que quieres eliminar esta publicación?')) {
+        try {
+          await apiDelete(`/api/posts/${p._id}`);
+          alert('Publicación eliminada exitosamente.');
+          // Remove the post from the UI
+          card.remove();
+          // Also remove from postsByCourse to keep data consistent
+          postsByCourse[p.course] = postsByCourse[p.course].filter(post => post._id !== p._id);
+        } catch (error) {
+          console.error('Error deleting post:', error);
+          alert(`Error al eliminar publicación: ${error.message}`);
+        }
+      }
+    };
+    card.appendChild(deleteBtn);
+  }
 
   // Make the post body clickable to navigate to post.html
   body.addEventListener('click', () => {
@@ -353,7 +531,7 @@ function setupSearch() {
 
     /* carga diferida de cursos no visitados */
     await Promise.all(
-      COURSES.filter(c => postsByCourse[c].length === 0).map(loadPosts)
+      courses.map(c => c.nombre).filter(c => postsByCourse[c] && postsByCourse[c].length === 0).map(loadPosts)
     );
 
     const all = Object.values(postsByCourse).flat();
@@ -365,20 +543,35 @@ function setupSearch() {
   });
 }
 
-/* =====================  Top-usuarios (mock)  ================= */
-function renderTopUsers() {
-  topUsersUL.innerHTML = '';
-  topUsers.forEach((u, i) => {
-    const li = document.createElement('li');
-    li.className = 'user-item';
-    li.innerHTML =
-      `<span class="user-rank">${i + 1}</span>
-       <img src="${u.avatar}" class="user-avatar" alt="${u.name}">
-       <div class="user-info">
-         <span class="user-name">${u.name}</span>
-         <span class="user-points">${u.points} pts</span>
-       </div>`;
-    topUsersUL.appendChild(li);
+/* =====================  Top-usuarios  ================= */
+async function loadTopUsers() {
+  try {
+    const topUsers = await apiFetch('/api/users/top');
+    renderTopUsers(topUsers);
+  } catch (error) {
+    console.error('Error loading top users:', error);
+    topUsersTableBody.innerHTML = '<tr><td colspan="3">Error al cargar los usuarios principales.</td></tr>';
+  }
+}
+
+function renderTopUsers(users) {
+  topUsersTableBody.innerHTML = ''; // Clear existing content
+  if (users.length === 0) {
+    topUsersTableBody.innerHTML = '<tr><td colspan="3">No hay usuarios para mostrar.</td></tr>';
+    return;
+  }
+
+  users.forEach((user, index) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${index + 1}</td>
+      <td>
+        <img src="${user.foto || 'imagenes/usuario.png'}" class="user-avatar" alt="${user.nombre}">
+        <a href="perfil.html?id=${user.userId}">${user.nombre}</a>
+      </td>
+      <td>${user.overallAverageRating}</td>
+    `;
+    topUsersTableBody.appendChild(row);
   });
 }
 

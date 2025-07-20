@@ -40,6 +40,37 @@ router.patch('/me', authenticateToken, async (req, res) => {
   }
 });
 
+// New: Add/Remove favorite courses
+router.patch('/favorites', authenticateToken, async (req, res) => {
+  try {
+    const { course, action } = req.body; // action can be 'add' or 'remove'
+    if (!course || !action) {
+      return res.status(400).json({ error: 'Course and action are required.' });
+    }
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    if (action === 'add') {
+      if (!user.favoritos.includes(course)) {
+        user.favoritos.push(course);
+      }
+    } else if (action === 'remove') {
+      user.favoritos = user.favoritos.filter(fav => fav !== course);
+    } else {
+      return res.status(400).json({ error: "Invalid action. Must be 'add' or 'remove'." });
+    }
+
+    await user.save();
+    res.json({ message: 'Favorites updated successfully.', favoritos: user.favoritos });
+  } catch (err) {
+    console.error('Error updating favorites:', err);
+    res.status(500).json({ error: 'Error al actualizar favoritos.' });
+  }
+});
+
 
 
 
@@ -58,6 +89,8 @@ router.get('/me', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Error al obtener el perfil del usuario actual' });
   }
 });
+
+
 
 router.get('/:id', authenticateToken, async (req, res) => {
   const isOwn = req.user && req.user.id === req.params.id;

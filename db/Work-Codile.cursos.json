@@ -18,4 +18,18 @@
   },
   "nombre": "Sistemas Distribuidos",
   "descripcion": "Introducción a los principios y arquitecturas de sistemas distribuidos con aplicaciones en inteligencia artificial."
+},
+{
+  "_id": {
+    "$oid": "684dbc9182c73fdf7136d93e"
+  },
+  "nombre": "Matemática 1",
+  "descripcion": "Curso introductorio a los fundamentos de las matemáticas."
+},
+{
+  "_id": {
+    "$oid": "684dbc9182c73fdf7136d93f"
+  },
+  "nombre": "Introducción a la Programación",
+  "descripcion": "Curso básico para aprender los fundamentos de la programación."
 }]

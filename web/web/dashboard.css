@@ -380,6 +380,7 @@ body {
   align-items: center;
   justify-content: center;
   padding: var(--gap);
+  z-index: 1000; /* Ensure modal is on top */
 }
 .modal.show {
   display: flex;

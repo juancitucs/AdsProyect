@@ -63,9 +63,55 @@
               <img src="imagenes/faq.png" alt="FAQ" class="menu-icon" />
               <span>FAQ</span>
             </li>
+            <li id="menu-admin" class="menu-item admin-only" style="display: none;">
+              <div id="menu-admin-header" class="menu-admin-header">
+                <img src="imagenes/set.jpg" alt="Admin" class="menu-icon" />
+                <span>Administración</span>
+                <span id="arrow-admin" class="arrow">▼</span>
+              </div>
+              <ul id="lista-admin" class="admin-lista">
+                <li id="admin-manage-courses">Administrar Cursos</li>
+              </ul>
+            </li>
           </ul>
         </nav>
       </aside>
+
+      <!-- Modal Administrar Cursos ------------------------------------------ -->
+      <div class="modal" id="admin-course-modal">
+        <div class="modal-box">
+          <button id="admin-course-modal-close" class="modal-close">✖</button>
+          <h3>Administrar Cursos</h3>
+
+          <h4>Agregar Nuevo Curso</h4>
+          <form id="add-course-form">
+            <label>
+              ID del Curso (ej. MAT101)
+              <input type="text" id="add-course-id" required />
+            </label>
+            <label>
+              Nombre del Curso
+              <input type="text" id="add-course-name" required />
+            </label>
+            <label>
+              Descripción del Curso
+              <textarea id="add-course-description" rows="3" required></textarea>
+            </label>
+            <button type="submit" class="btn-publish">Agregar Curso</button>
+          </form>
+
+          <hr style="margin: 20px 0;">
+
+          <h4>Eliminar Curso Existente</h4>
+          <form id="delete-course-form">
+            <label>
+              Seleccionar Curso a Eliminar
+              <select id="delete-course-select" required></select>
+            </label>
+            <button type="submit" class="btn-delete">Eliminar Curso</button>
+          </form>
+        </div>
+      </div>
 
       <!-- Feed ------------------------------------------------------- -->
       <main class="feed" id="feed"></main>
@@ -73,7 +119,16 @@
       <!-- Rightbar --------------------------------------------------- -->
       <aside class="rightbar">
         <h4>Top usuarios</h4>
-        <ul id="top-users" class="user-list"></ul>
+        <table id="top-users-table" class="user-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Usuario</th>
+              <th>Calificación Promedio</th>
+            </tr>
+          </thead>
+          <tbody id="top-users-body"></tbody>
+        </table>
       </aside>
 
       <!-- FAB móvil -------------------------------------------------- -->
